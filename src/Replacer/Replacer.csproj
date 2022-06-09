@@ -7,8 +7,14 @@
       <Nullable>enable</Nullable>
       <TrimmerDefaultAction>link</TrimmerDefaultAction>
       <InvariantGlobalization>true</InvariantGlobalization>
+      <PublishSingleFile>true</PublishSingleFile>
       <PublishTrimmed>true</PublishTrimmed>
       <PublishReadyToRun>true</PublishReadyToRun>
+      <AssemblyName>sops-replacer</AssemblyName>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DebugType>none</DebugType>
     </PropertyGroup>
 
     <ItemGroup>

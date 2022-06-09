@@ -45,9 +45,21 @@ jobs:
         run: dotnet restore --runtime ${{ matrix.target }}
 
       - name: Publish
-        run: dotnet publish --configuration Release --no-restore --runtime ${{ matrix.target }} --self-contained true
+        shell: bash
+        run: |
+          tag=$(git describe --tags --abbrev=0)
+          release_name="sops-replacer-$tag-${{ matrix.target }}"
 
-      - name: Upload dotnet test results
+          dotnet publish --configuration Release --no-restore --runtime ${{ matrix.target }} --self-contained true -o publish
+
+          # Pack files
+          if [ "${{ matrix.target }}" == "win-x64" ]; then
+            7z a -tzip "${release_name}.zip" ./publish/*
+          else
+            tar czvf "${release_name}.tar.gz" publish/*
+          fi
+
+      - name: Upload dotnet release
         uses: actions/upload-artifact@v3
         with:
           name: dotnet-results-${{ matrix.os }}
