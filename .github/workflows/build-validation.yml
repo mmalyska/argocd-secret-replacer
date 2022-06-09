@@ -16,7 +16,17 @@ jobs:
 
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest, macOS-latest ]
+        kind: [ 'linux', 'windows', 'macOS' ]
+        include:
+          - kind: linux
+            os: ubuntu-latest
+            target: linux-x64
+          - kind: windows
+            os: windows-latest
+            target: win-x64
+          - kind: macOS
+            os: macos-latest
+            target: osx-x64
 
     name: build-${{matrix.os}}
     runs-on: ${{ matrix.os }}
@@ -40,7 +50,7 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release --no-restore --runtime ${{ matrix.target }}
 
       - name: Test
         run: dotnet test --no-restore --verbosity normal --logger trx --results-directory ./TestResults-${{ matrix.os }}
