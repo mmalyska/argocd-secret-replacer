@@ -42,7 +42,7 @@ jobs:
             ${{ runner.os }}-nuget
 
       - name: Install dependencies
-        run: dotnet restore
+        run: dotnet restore --runtime ${{ matrix.target }}
 
       - name: Publish
         run: dotnet publish --configuration Release --no-restore --runtime ${{ matrix.target }} --self-contained true
