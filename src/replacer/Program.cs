@@ -5,6 +5,10 @@ using static CommandLine.Parser;
 using replacer;
 
 Console.WriteLine("Hello, World!");
+if (!Console.IsInputRedirected)
+{
+        return;
+}
 
 using var loggerFactory = new LoggerFactory();
 
@@ -21,9 +25,10 @@ await parser.WithParsedAsync(options => RunOptions(options));
 static async Task RunOptions(Options opts)
 {
     var regexKey = new Regex(@"<[ \t]*(secret|sops):[^\r\n]+?>");
+
     while (await Console.In.ReadLineAsync() is { } line)
     {
         var replaced = regexKey.Replace(line, "[replaced]");
-        await Console.Out.WriteAsync(replaced);
+        await Console.Out.WriteLineAsync(replaced);
     }
 }
