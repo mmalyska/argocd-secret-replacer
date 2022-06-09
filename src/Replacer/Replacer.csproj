@@ -6,13 +6,9 @@
       <ImplicitUsings>enable</ImplicitUsings>
       <Nullable>enable</Nullable>
       <TrimmerDefaultAction>link</TrimmerDefaultAction>
-    </PropertyGroup>
-  
-    <PropertyGroup Condition="'$(Configuration)'=='Release'">
-      <PublishSingleFile>true</PublishSingleFile>
-      <SelfContained>true</SelfContained>
-      <PublishReadyToRun>true</PublishReadyToRun>
+      <InvariantGlobalization>true</InvariantGlobalization>
       <PublishTrimmed>true</PublishTrimmed>
+      <PublishReadyToRun>true</PublishReadyToRun>
     </PropertyGroup>
 
     <ItemGroup>

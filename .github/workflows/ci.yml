@@ -1,0 +1,55 @@
+﻿name: Publish
+on:
+  release:
+    types: [published]
+
+env:
+  DOTNET_VERSION: '6.0.*'
+
+jobs:
+  release:
+
+    strategy:
+      matrix:
+        kind: [ 'linux', 'windows', 'macOS' ]
+        include:
+          - kind: linux
+            os: ubuntu-latest
+            target: linux-x64
+          - kind: windows
+            os: windows-latest
+            target: win-x64
+          - kind: macOS
+            os: macos-latest
+            target: osx-x64
+
+    name: Release
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          # Look to see if there is a cache hit for the corresponding requirements file
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Publish
+        run: dotnet publish --configuration Release --no-restore --runtime ${{ matrix.target }} --self-contained true
+
+      - name: Upload dotnet test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: dotnet-results-${{ matrix.os }}
+          path: TestResults-${{ matrix.os }}
+        if: ${{ always() }}
