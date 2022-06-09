@@ -44,13 +44,15 @@ jobs:
       - name: Install dependencies
         run: dotnet restore --runtime ${{ matrix.target }}
 
-      - name: Publish
+      - name: Set env variables
         shell: bash
         run: |
           tag=$(git describe --tags --abbrev=0)
           echo "release_name=sops-replacer-$tag-${{ matrix.target }}" >> $GITHUB_ENV
 
-
+      - name: Publish
+        shell: bash
+        run: |
           dotnet publish --configuration Release --no-restore --runtime ${{ matrix.target }} --self-contained true -o publish
 
           # Pack files
