@@ -3,6 +3,9 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: write
+
 env:
   DOTNET_VERSION: '6.0.*'
 
@@ -62,9 +65,9 @@ jobs:
             mkdir -p out && tar czvf "out/${{ env.release_name }}.tar.gz" publish/*
           fi
 
-      - name: Upload dotnet release
-        uses: actions/upload-artifact@v3
+      - name: Create release
+        uses: softprops/action-gh-release@v1
         with:
-          name: ${{ env.release_name }}
-          path: out
-        if: ${{ always() }}
+          files: out/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
