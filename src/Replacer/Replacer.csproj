@@ -6,6 +6,9 @@
       <ImplicitUsings>enable</ImplicitUsings>
       <Nullable>enable</Nullable>
       <TrimmerDefaultAction>link</TrimmerDefaultAction>
+      <InvariantGlobalization>true</InvariantGlobalization>
+      <PublishTrimmed>true</PublishTrimmed>
+      <PublishReadyToRun>true</PublishReadyToRun>
     </PropertyGroup>
 
     <ItemGroup>
