@@ -1,8 +1,9 @@
-﻿using System.Text.RegularExpressions;
-using CommandLine;
+﻿using CommandLine;
 using Microsoft.Extensions.Logging;
 using static CommandLine.Parser;
 using replacer;
+using replacer.SecretsProvider;
+using replacer.Substitution;
 
 Console.WriteLine("Hello, World!");
 if (!Console.IsInputRedirected)
@@ -20,15 +21,14 @@ var parser = Default.ParseArguments(() => new Options(), args)
         Environment.Exit(2);
     });
 
-await parser.WithParsedAsync(options => RunOptions(options));
+await parser.WithParsedAsync(RunOptions);
 
 static async Task RunOptions(Options opts)
 {
-    var regexKey = new Regex(@"<[ \t]*(secret|sops):[^\r\n]+?>");
-
+    IReplacer replacer = new Replacer();
+    ISecretsProvider secretsProvider = new SopsSecretProvider();
     while (await Console.In.ReadLineAsync() is { } line)
     {
-        var replaced = regexKey.Replace(line, "[replaced]");
-        await Console.Out.WriteLineAsync(replaced);
+        await Console.Out.WriteLineAsync(replacer.Replace(line, secretsProvider));
     }
 }
