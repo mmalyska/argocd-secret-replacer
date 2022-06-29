@@ -7,12 +7,12 @@ using Common;
 using replacer.SecretsProvider;
 using replacer.Substitution;
 
-public class UnitTest1
+public class ReplacerTests
 {
     private readonly Replacer replacer;
     private readonly ISecretsProvider emptySecretsProvider;
 
-    public UnitTest1()
+    public ReplacerTests()
     {
         replacer = new Replacer();
         emptySecretsProvider = new SimpleSecretsProvider("");

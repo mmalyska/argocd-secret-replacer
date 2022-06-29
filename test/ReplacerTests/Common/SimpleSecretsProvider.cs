@@ -1,5 +1,6 @@
 ﻿namespace ReplacerTests.Common;
 
+using System.Threading.Tasks;
 using replacer.SecretsProvider;
 
 public class SimpleSecretsProvider : ISecretsProvider
@@ -9,6 +10,6 @@ public class SimpleSecretsProvider : ISecretsProvider
     public SimpleSecretsProvider(string staticSecret)
         => this.staticSecret = staticSecret;
 
-    public string GetSecret(string key)
-        => staticSecret;
+    public Task<string> GetSecretAsync(string key)
+        => Task.FromResult(staticSecret);
 }

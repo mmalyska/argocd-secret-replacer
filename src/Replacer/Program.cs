@@ -26,9 +26,11 @@ await parser.WithParsedAsync(RunOptions);
 static async Task RunOptions(Options opts)
 {
     IReplacer replacer = new Replacer();
-    ISecretsProvider secretsProvider = new SopsSecretProvider();
+    var providerFactory = new SecretsProviderFactory(opts);
+    var provider = providerFactory.GetProvider(opts.SecretType.Value);
+
     while (await Console.In.ReadLineAsync() is { } line)
     {
-        await Console.Out.WriteLineAsync(replacer.Replace(line, secretsProvider));
+        await Console.Out.WriteLineAsync(replacer.Replace(line, provider));
     }
 }
