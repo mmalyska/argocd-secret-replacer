@@ -51,7 +51,7 @@ jobs:
         shell: bash
         run: |
           tag=$(git describe --tags --abbrev=0)
-          echo "release_name=sops-replacer-$tag-${{ matrix.target }}" >> $GITHUB_ENV
+          echo "release_name=secret-replacer-$tag-${{ matrix.target }}" >> $GITHUB_ENV
 
       - name: Publish
         shell: bash
