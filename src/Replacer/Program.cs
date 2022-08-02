@@ -27,7 +27,7 @@ static async Task RunOptions(Options opts)
 {
     IReplacer replacer = new Replacer();
     var providerFactory = new SecretsProviderFactory(opts);
-    var provider = providerFactory.GetProvider(opts.SecretType.Value);
+    var provider = providerFactory.GetProvider(opts.SecretType);
 
     while (await Console.In.ReadLineAsync() is { } line)
     {

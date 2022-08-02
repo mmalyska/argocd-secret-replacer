@@ -20,6 +20,7 @@ public class Replacer : IReplacer
     {
         var path = match.Groups["path"].Value;
         var modifiers = match.Groups["modifiers"].Value.Split('|');
-        return secretsProvider.GetSecretAsync(path).Result;
+        var secret = secretsProvider.GetSecretAsync(path).Result;
+        return string.IsNullOrEmpty(secret) ? match.Value : secret;
     }
 }
