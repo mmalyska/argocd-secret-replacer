@@ -1,14 +1,17 @@
 ﻿namespace replacer.SecretsProvider;
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 public class SopsSecretProvider : ISecretsProvider
 {
-    private readonly string sopsOptions;
-    private Dictionary<string,string>? secretValues;
+    private readonly string? sopsFile;
+    private SecretObject? secretValues;
 
     public SopsSecretProvider(Options options)
-        => sopsOptions = options.SopsOptions ?? throw new InvalidOperationException();
+        => sopsFile = options.SopsFile ?? throw new InvalidOperationException();
 
     public async Task<string> GetSecretAsync(string key)
     {
@@ -19,16 +22,22 @@ public class SopsSecretProvider : ISecretsProvider
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "sops",
-                    Arguments = sopsOptions,
+                    Arguments = "-d " + sopsFile,
+                    RedirectStandardOutput = true
                 },
             };
 
             process.Start();
+            var serializedData = await process.StandardOutput.ReadToEndAsync();
             await process.WaitForExitAsync();
-            var decodedFile = await process.StandardOutput.ReadToEndAsync();
-            secretValues = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string,string>>(decodedFile) ?? new Dictionary<string, string>();
+            secretValues = JsonSerializer.Deserialize<SecretObject>(serializedData, SourceGenerationContext.Default.SecretObject) ?? new SecretObject();
         }
         secretValues.TryGetValue(key, out var value);
         return value ?? string.Empty;
     }
 }
+
+public class SecretObject: Dictionary<string, string>{}
+
+[JsonSerializable(typeof(SecretObject))]
+internal partial class SourceGenerationContext : JsonSerializerContext { }
