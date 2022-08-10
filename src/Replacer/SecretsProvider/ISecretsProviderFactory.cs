@@ -1,5 +1,7 @@
 ﻿namespace replacer.SecretsProvider;
 
+using replacer.SecretsProvider.Sops;
+
 public enum SecretProviderTypes
 {
     sops,
