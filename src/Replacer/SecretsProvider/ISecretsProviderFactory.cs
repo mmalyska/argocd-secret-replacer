@@ -22,7 +22,7 @@ public class SecretsProviderFactory : ISecretsProviderFactory
     public ISecretsProvider GetProvider(SecretProviderTypes providerType)
         => providerType switch
         {
-            SecretProviderTypes.sops => new SopsSecretProvider(options),
+            SecretProviderTypes.sops => new SopsSecretProvider(options, new SopsProcessWrapper(options)),
             _ => throw new ArgumentOutOfRangeException(nameof(providerType), providerType, null),
         };
 }
