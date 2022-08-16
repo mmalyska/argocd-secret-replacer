@@ -11,7 +11,7 @@ public interface IProcessWrapper
 
 public abstract class SystemProcess: IProcessWrapper, IDisposable
 {
-    protected readonly Process process;
+    internal readonly Process process;
     private bool disposedValue;
 
     protected SystemProcess()
