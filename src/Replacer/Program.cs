@@ -5,10 +5,9 @@ using replacer;
 using replacer.SecretsProvider;
 using replacer.Substitution;
 
-Console.WriteLine("Hello, World!");
 if (!Console.IsInputRedirected)
 {
-        return;
+    return;
 }
 
 using var loggerFactory = new LoggerFactory();
@@ -25,12 +24,12 @@ await parser.WithParsedAsync(RunOptions);
 
 static async Task RunOptions(Options opts)
 {
-    IReplacer replacer = new Replacer();
     var providerFactory = new SecretsProviderFactory(opts);
     var provider = providerFactory.GetProvider(opts.SecretType);
+    IReplacer replacer = new Replacer(provider);
 
     while (await Console.In.ReadLineAsync() is { } line)
     {
-        await Console.Out.WriteLineAsync(replacer.Replace(line, provider));
+        await Console.Out.WriteLineAsync(replacer.Replace(line));
     }
 }

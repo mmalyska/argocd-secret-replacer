@@ -1,7 +1,6 @@
 ﻿namespace replacer.SecretsProvider.Sops;
 
 using System.Collections.Generic;
-using System.Diagnostics;
 
 public class SopsSecretProvider : ISecretsProvider, IDisposable
 {
