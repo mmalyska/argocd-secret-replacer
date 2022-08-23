@@ -30,6 +30,9 @@ static async Task RunOptions(Options opts)
 
     while (await Console.In.ReadLineAsync() is { } line)
     {
-        await Console.Out.WriteLineAsync(replacer.Replace(line));
+        if (Console.In.Peek() == -1)
+            await Console.Out.WriteAsync(replacer.Replace(line));
+        else
+            await Console.Out.WriteLineAsync(replacer.Replace(line));
     }
 }

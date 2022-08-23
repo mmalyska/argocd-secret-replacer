@@ -46,8 +46,8 @@ public class SopsSecretProvider : ISecretsProvider, IDisposable
 
         secretValues = Path.GetExtension(sopsFile) switch
         {
-            "json" => JsonDeserializer.GetSecretValues(serializedData),
-            "yml" or "yaml" => YamlDeserializer.GetSecretValues(serializedData),
+            ".json" => JsonDeserializer.GetSecretValues(serializedData),
+            ".yml" or ".yaml" => YamlDeserializer.GetSecretValues(serializedData),
             _ => new Dictionary<string, string>(),
         };
     }

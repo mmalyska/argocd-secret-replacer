@@ -18,11 +18,10 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Replacer\Replacer.csproj" />
+        <ProjectReference Include="..\..\src\Replacer\Replacer.csproj" />
     </ItemGroup>
 
     <ItemGroup>
