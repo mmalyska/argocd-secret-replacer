@@ -1,10 +1,7 @@
 namespace ReplacerE2ETests;
 
-using System.IO;
+using System;
 using System.Threading.Tasks;
-using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Configurations;
-using DotNet.Testcontainers.Containers;
 using Xunit;
 
 public class SopsE2ETests{
@@ -19,6 +16,10 @@ public class SopsE2ETests{
 
         Skip.IfNot(System.OperatingSystem.IsLinux(), "Test designed for Linux");
 
-        
+        var entryPoint = typeof(Program).Assembly.EntryPoint!;
+        var returnObject = entryPoint.Invoke(null, new object[] { Array.Empty<string>() });
+        if(returnObject is Task returnTask){
+            await returnTask;
+        }
     }
 }
