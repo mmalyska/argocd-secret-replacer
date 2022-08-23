@@ -9,7 +9,7 @@ using replacer.Substitution;
 
 public class ReplacerTests
 {
-    private readonly Replacer replacer;
+    private Replacer replacer;
     private readonly ISecretsProvider emptySecretsProvider;
 
     public ReplacerTests()
@@ -54,6 +54,7 @@ public class ReplacerTests
         var simpleString = "aa<secret:path>bb";
         var expectedString = "aa[replaced]bb";
         var secretProvider = new SimpleSecretsProvider("[replaced]");
+        replacer = new Replacer(secretProvider);
 
         var result = replacer.Replace(simpleString);
 
