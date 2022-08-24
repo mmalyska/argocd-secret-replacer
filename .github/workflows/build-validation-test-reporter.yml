@@ -1,0 +1,29 @@
+﻿name: "test report"
+
+on:
+  workflow_run:
+    workflows: ['build']                     # runs after CI workflow
+    types:
+      - completed
+
+env:
+  DOTNET_VERSION: '6.0.*'
+
+jobs:
+  report:
+
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macOS-latest ]
+
+    name: test-report
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        with:
+          artifact: dotnet-results-${{ matrix.os }}
+          name: Test Results (${{ matrix.os }})
+          path: "TestResults-${{ matrix.os }}/*.trx"
+          reporter: dotnet-trx
