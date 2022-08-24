@@ -8,10 +8,6 @@ on:
       - '**.cs'
       - '**.csproj'
 
-permissions:
-  contents: write
-  pull-requests: write
-
 env:
   DOTNET_VERSION: '6.0.*'
 
