@@ -25,5 +25,5 @@ jobs:
         with:
           artifact: dotnet-results-${{ matrix.os }}
           name: Test Results (${{ matrix.os }})
-          path: "TestResults-${{ matrix.os }}/*.trx"
+          path: "*.trx"
           reporter: dotnet-trx
