@@ -9,7 +9,7 @@ on:
       - '**.csproj'
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   DOTNET_VERSION: '6.0.*'
