@@ -11,6 +11,7 @@
       <PublishTrimmed>true</PublishTrimmed>
       <PublishReadyToRun>true</PublishReadyToRun>
       <AssemblyName>sops-replacer</AssemblyName>
+      <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
