@@ -1,13 +1,13 @@
-﻿using System.Text.RegularExpressions;
-using CommandLine;
+﻿using CommandLine;
 using Microsoft.Extensions.Logging;
 using static CommandLine.Parser;
 using replacer;
+using replacer.SecretsProvider;
+using replacer.Substitution;
 
-Console.WriteLine("Hello, World!");
 if (!Console.IsInputRedirected)
 {
-        return;
+    return;
 }
 
 using var loggerFactory = new LoggerFactory();
@@ -20,15 +20,19 @@ var parser = Default.ParseArguments(() => new Options(), args)
         Environment.Exit(2);
     });
 
-await parser.WithParsedAsync(options => RunOptions(options));
+await parser.WithParsedAsync(RunOptions);
 
 static async Task RunOptions(Options opts)
 {
-    var regexKey = new Regex(@"<[ \t]*(secret|sops):[^\r\n]+?>");
+    var providerFactory = new SecretsProviderFactory(opts);
+    var provider = providerFactory.GetProvider(opts.SecretType);
+    IReplacer replacer = new Replacer(provider);
 
     while (await Console.In.ReadLineAsync() is { } line)
     {
-        var replaced = regexKey.Replace(line, "[replaced]");
-        await Console.Out.WriteLineAsync(replaced);
+        if (Console.In.Peek() == -1)
+            await Console.Out.WriteAsync(replacer.Replace(line));
+        else
+            await Console.Out.WriteLineAsync(replacer.Replace(line));
     }
 }

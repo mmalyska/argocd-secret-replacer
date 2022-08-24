@@ -1,9 +1,13 @@
 ﻿namespace replacer;
 
 using CommandLine;
+using SecretsProvider;
 
 public class Options
 {
-    //[Option('f', "file", Required = true, HelpText = "File encrypted with sops containing json object.")]
-    public string? FileName { get; set; }
+    [Option('t', "type", Required = true, HelpText = "Type of secret to process")]
+    public SecretProviderTypes SecretType { get; set; }
+
+    [Option('f', "sops-file", Required = false, HelpText = "Sops file to open")]
+    public string? SopsFile { get; set; } = string.Empty;
 }

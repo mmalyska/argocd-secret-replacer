@@ -28,6 +28,9 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
+      - name: Sops Binary Installer
+        uses: mdgreenwald/mozilla-sops-action@v1.2.0
+
       - uses: actions/cache@v3
         with:
           path: ~/.nuget/packages
@@ -43,11 +46,11 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test --no-restore --verbosity normal --logger trx --results-directory ./TestResults-${{ matrix.os }}
+        run: dotnet test --no-restore --verbosity normal --logger trx --results-directory "TestResults-${{ matrix.os }}"
 
       - name: Upload dotnet test results
         uses: actions/upload-artifact@v3
         with:
           name: dotnet-results-${{ matrix.os }}
           path: TestResults-${{ matrix.os }}
-        if: ${{ always() }}
+        if: success() || failure() 
