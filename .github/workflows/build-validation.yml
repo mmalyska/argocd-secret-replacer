@@ -8,6 +8,9 @@ on:
       - '**.cs'
       - '**.csproj'
 
+permissions:
+  contents: read
+
 env:
   DOTNET_VERSION: '6.0.*'
 
