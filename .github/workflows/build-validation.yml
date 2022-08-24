@@ -8,6 +8,10 @@ on:
       - '**.cs'
       - '**.csproj'
 
+permissions:
+  contents: read
+  checks: write
+
 env:
   DOTNET_VERSION: '6.0.*'
 
@@ -53,4 +57,12 @@ jobs:
         with:
           name: dotnet-results-${{ matrix.os }}
           path: TestResults-${{ matrix.os }}
-        if: success() || failure() 
+        if: ${{ always() }}
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Test Results (${{ matrix.os }})
+          path: "TestResults-${{ matrix.os }}/*.trx"
+          reporter: dotnet-trx
