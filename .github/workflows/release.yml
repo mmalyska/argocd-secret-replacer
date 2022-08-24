@@ -56,8 +56,7 @@ jobs:
       - name: Publish
         shell: bash
         run: |
-          cd src/Replacer
-          dotnet publish --configuration Release --no-restore --runtime ${{ matrix.target }} --self-contained true -o publish
+          dotnet publish src/Replacer/Replacer.csproj --configuration Release --no-restore --runtime ${{ matrix.target }} --self-contained true -o publish
 
           # Pack files
           if [ "${{ matrix.target }}" == "win-x64" ]; then
