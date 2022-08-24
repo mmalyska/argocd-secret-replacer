@@ -56,13 +56,14 @@ jobs:
       - name: Publish
         shell: bash
         run: |
+          cd src/Replacer
           dotnet publish --configuration Release --no-restore --runtime ${{ matrix.target }} --self-contained true -o publish
 
           # Pack files
           if [ "${{ matrix.target }}" == "win-x64" ]; then
             7z a -tzip "./out/${{ env.release_name }}.zip" ./publish/*
           else
-            mkdir -p out && cd publish && tar -czvf "../out/test.tar.gz" * && cd -
+            mkdir -p out && cd publish && tar -czvf "../out/${{ env.release_name }}.tar.gz" * && cd -
           fi
 
       - name: Create release
