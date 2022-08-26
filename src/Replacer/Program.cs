@@ -20,19 +20,14 @@ var parser = Default.ParseArguments(args, typeof(SopsOptions))
         Environment.Exit(2);
     });
 
-await parser.WithParsedAsync(RunOptions);
+parser.WithParsed(RunOptions);
 
-static async Task RunOptions(object opts)
+static void RunOptions(object opts)
 {
     var providerFactory = new SecretsProviderFactory();
     var provider = providerFactory.GetProvider(opts);
     ISecretReplacer replacer = new SecretReplacer(provider);
 
-    while (await Console.In.ReadLineAsync() is { } line)
-    {
-        if (Console.In.Peek() == -1)
-            await Console.Out.WriteAsync(replacer.Replace(line));
-        else
-            await Console.Out.WriteLineAsync(replacer.Replace(line));
-    }
+    var data = Console.In.ReadToEnd();
+    Console.Out.WriteLine(replacer.Replace(data));
 }

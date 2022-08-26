@@ -41,7 +41,10 @@ public class ReplacerTests
     [Fact]
     public void MultilineStringWithoutMatchShouldNotChange()
     {
-        var simpleString = "aaaa something aaaa" + Environment.NewLine + "bbbb different line";
+        var simpleString = @"aaaa something aaaa
+        bbbb different line
+        
+        ";
 
         var result = replacer.Replace(simpleString);
 

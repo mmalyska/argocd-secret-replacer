@@ -7,6 +7,7 @@ public class YamlDeserializer{
     public static Dictionary<string, string> GetSecretValues(string input){
         var deserializer = new DeserializerBuilder()
             .WithNamingConvention(UnderscoredNamingConvention.Instance)
+            .IgnoreUnmatchedProperties()
             .Build();
         var obj = deserializer.Deserialize<SecretObject>(input);
         return obj.Data;

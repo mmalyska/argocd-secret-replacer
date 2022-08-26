@@ -27,6 +27,6 @@ public class SecretReplacer : ISecretReplacer
         var path = match.Groups["path"].Value;
         var modifiers = match.Groups["modifiers"].Value.Split('|');
         var secret = secretsProvider.GetSecretAsync(path).Result;
-        return string.IsNullOrEmpty(secret) ? match.Value : secret;
+        return match.Success ? secret : match.Value;
     }
 }
