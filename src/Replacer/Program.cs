@@ -12,7 +12,7 @@ if (!Console.IsInputRedirected)
 
 using var loggerFactory = new LoggerFactory();
 
-var parser = Default.ParseArguments<SopsOptions>(args)
+var parser = Default.ParseArguments(args, typeof(SopsOptions))
     .WithNotParsed(errors =>
     {
         var logger = loggerFactory.CreateLogger<Program>();
@@ -22,7 +22,7 @@ var parser = Default.ParseArguments<SopsOptions>(args)
 
 await parser.WithParsedAsync(RunOptions);
 
-static async Task RunOptions(Options opts)
+static async Task RunOptions(object opts)
 {
     var providerFactory = new SecretsProviderFactory();
     var provider = providerFactory.GetProvider(opts);
