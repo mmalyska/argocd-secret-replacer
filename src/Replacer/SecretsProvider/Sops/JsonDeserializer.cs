@@ -1,4 +1,4 @@
-namespace replacer.SecretsProvider.Sops;
+namespace Replacer.SecretsProvider.Sops;
 
 using System.Text.Json;
 using System.Text.Json.Serialization;

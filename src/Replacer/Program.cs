@@ -1,9 +1,9 @@
 ﻿using CommandLine;
 using Microsoft.Extensions.Logging;
 using static CommandLine.Parser;
-using replacer;
-using replacer.SecretsProvider;
-using replacer.Substitution;
+using Replacer;
+using Replacer.SecretsProvider;
+using Replacer.Substitution;
 
 if (!Console.IsInputRedirected)
 {
@@ -26,7 +26,7 @@ static async Task RunOptions(Options opts)
 {
     var providerFactory = new SecretsProviderFactory();
     var provider = providerFactory.GetProvider(opts);
-    IReplacer replacer = new Replacer(provider);
+    ISecretReplacer replacer = new SecretReplacer(provider);
 
     while (await Console.In.ReadLineAsync() is { } line)
     {

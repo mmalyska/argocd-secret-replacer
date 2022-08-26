@@ -1,4 +1,4 @@
-﻿namespace replacer;
+﻿namespace Replacer;
 
 using Microsoft.Extensions.Logging;
 

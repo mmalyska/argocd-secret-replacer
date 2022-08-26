@@ -1,4 +1,4 @@
-namespace replacer.SecretsProvider.Sops;
+namespace Replacer.SecretsProvider.Sops;
 
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;

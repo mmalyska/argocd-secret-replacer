@@ -1,7 +1,7 @@
-﻿namespace replacer;
+﻿namespace Replacer;
 
 using CommandLine;
-using replacer.SecretsProvider;
+using Replacer.SecretsProvider;
 
 public abstract class Options {
     public abstract SecretProviderTypes ProviderType { get; }

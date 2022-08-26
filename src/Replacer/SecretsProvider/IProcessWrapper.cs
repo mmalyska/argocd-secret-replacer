@@ -1,4 +1,4 @@
-namespace replacer.SecretsProvider;
+namespace Replacer.SecretsProvider;
 
 using System.Diagnostics;
 
