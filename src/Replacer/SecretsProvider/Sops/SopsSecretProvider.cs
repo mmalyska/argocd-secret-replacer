@@ -1,4 +1,4 @@
-﻿namespace replacer.SecretsProvider.Sops;
+﻿namespace Replacer.SecretsProvider.Sops;
 
 using System.Collections.Generic;
 
@@ -10,9 +10,9 @@ public class SopsSecretProvider : ISecretsProvider, IDisposable
     private bool disposedValue;
     private readonly IProcessWrapper process;
 
-    public SopsSecretProvider(Options options, IProcessWrapper processWrapper)
+    public SopsSecretProvider(SopsOptions options, IProcessWrapper processWrapper)
     {
-        sopsFile = options.SopsFile ?? throw new ArgumentNullException(nameof(options));
+        sopsFile = options.File ?? throw new ArgumentNullException(nameof(options));
         process = processWrapper ?? throw  new ArgumentNullException(nameof(processWrapper));
     }
 

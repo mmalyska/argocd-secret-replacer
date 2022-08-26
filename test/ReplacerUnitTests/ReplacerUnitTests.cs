@@ -4,18 +4,18 @@ namespace ReplacerUnitTests;
 
 using System;
 using Common;
-using replacer.SecretsProvider;
-using replacer.Substitution;
+using Replacer.SecretsProvider;
+using Replacer.Substitution;
 
 public class ReplacerTests
 {
-    private Replacer replacer;
+    private SecretReplacer replacer;
     private readonly ISecretsProvider emptySecretsProvider;
 
     public ReplacerTests()
     {
         emptySecretsProvider = new SimpleSecretsProvider("");
-        replacer = new Replacer(emptySecretsProvider);
+        replacer = new SecretReplacer(emptySecretsProvider);
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class ReplacerTests
         var simpleString = "aa<secret:path>bb";
         var expectedString = "aa[replaced]bb";
         var secretProvider = new SimpleSecretsProvider("[replaced]");
-        replacer = new Replacer(secretProvider);
+        replacer = new SecretReplacer(secretProvider);
 
         var result = replacer.Replace(simpleString);
 

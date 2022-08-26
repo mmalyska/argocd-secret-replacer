@@ -15,7 +15,7 @@ public class SopsJsonE2ETests
 
         var entryPoint = typeof(Program).Assembly.EntryPoint!;
         var options = new string[]{
-            "-t sops"
+            "sops"
         };
         var returnObject = entryPoint.Invoke(null, new object[] { options });
         if(returnObject is Task returnTask)
@@ -35,7 +35,7 @@ public class SopsJsonE2ETests
 
         var entryPoint = typeof(Program).Assembly.EntryPoint!;
         var options = new string[]{
-            "-t sops"
+            "sops"
         };
         var returnObject = entryPoint.Invoke(null, new object[] { options });
         if(returnObject is Task returnTask)
@@ -57,8 +57,8 @@ public class SopsJsonE2ETests
 
         var entryPoint = typeof(Program).Assembly.EntryPoint!;
         var options = new string[]{
+            "sops",
             "-f sops/sops.sec.json",
-            "-t sops",
         };
         var returnObject = entryPoint.Invoke(null, new object[] { options });
         if(returnObject is Task returnTask)

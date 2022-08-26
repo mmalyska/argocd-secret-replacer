@@ -1,13 +1,17 @@
-﻿namespace replacer;
+﻿namespace Replacer;
 
 using CommandLine;
-using SecretsProvider;
+using Replacer.SecretsProvider;
 
-public class Options
+public abstract class Options {
+    public abstract SecretProviderTypes ProviderType { get; }
+}
+
+[Verb("sops", HelpText = "Manage sops options")]
+public class SopsOptions : Options
 {
-    [Option('t', "type", Required = true, HelpText = "Type of secret to process")]
-    public SecretProviderTypes SecretType { get; set; }
+    [Option('f', "file", Required = false, HelpText = "Sops file to open")]
+    public string? File { get; set; } = string.Empty;
 
-    [Option('f', "sops-file", Required = false, HelpText = "Sops file to open")]
-    public string? SopsFile { get; set; } = string.Empty;
+    public override SecretProviderTypes ProviderType => SecretProviderTypes.sops;
 }

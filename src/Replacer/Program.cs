@@ -1,9 +1,9 @@
 ﻿using CommandLine;
 using Microsoft.Extensions.Logging;
 using static CommandLine.Parser;
-using replacer;
-using replacer.SecretsProvider;
-using replacer.Substitution;
+using Replacer;
+using Replacer.SecretsProvider;
+using Replacer.Substitution;
 
 if (!Console.IsInputRedirected)
 {
@@ -12,7 +12,7 @@ if (!Console.IsInputRedirected)
 
 using var loggerFactory = new LoggerFactory();
 
-var parser = Default.ParseArguments(() => new Options(), args)
+var parser = Default.ParseArguments<SopsOptions>(args)
     .WithNotParsed(errors =>
     {
         var logger = loggerFactory.CreateLogger<Program>();
@@ -24,9 +24,9 @@ await parser.WithParsedAsync(RunOptions);
 
 static async Task RunOptions(Options opts)
 {
-    var providerFactory = new SecretsProviderFactory(opts);
-    var provider = providerFactory.GetProvider(opts.SecretType);
-    IReplacer replacer = new Replacer(provider);
+    var providerFactory = new SecretsProviderFactory();
+    var provider = providerFactory.GetProvider(opts);
+    ISecretReplacer replacer = new SecretReplacer(provider);
 
     while (await Console.In.ReadLineAsync() is { } line)
     {

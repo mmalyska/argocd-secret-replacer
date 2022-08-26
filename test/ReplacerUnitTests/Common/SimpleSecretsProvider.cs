@@ -1,7 +1,7 @@
 ﻿namespace ReplacerUnitTests.Common;
 
 using System.Threading.Tasks;
-using replacer.SecretsProvider;
+using Replacer.SecretsProvider;
 
 public class SimpleSecretsProvider : ISecretsProvider
 {

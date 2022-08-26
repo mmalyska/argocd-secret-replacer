@@ -1,4 +1,4 @@
-﻿namespace replacer.Modifiers;
+﻿namespace Replacer.Modifiers;
 
 public interface IModifiersFactory
 {
