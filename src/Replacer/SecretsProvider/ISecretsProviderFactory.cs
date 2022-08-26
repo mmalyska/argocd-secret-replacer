@@ -9,20 +9,14 @@ public enum SecretProviderTypes
 
 public interface ISecretsProviderFactory
 {
-    ISecretsProvider GetProvider(SecretProviderTypes providerType);
+    ISecretsProvider GetProvider(Options options);
 }
 
 public class SecretsProviderFactory : ISecretsProviderFactory
 {
-    private readonly Options options;
-
-    public SecretsProviderFactory(Options options)
-        => this.options = options;
-
-    public ISecretsProvider GetProvider(SecretProviderTypes providerType)
-        => providerType switch
-        {
-            SecretProviderTypes.sops => new SopsSecretProvider(options, new SopsProcessWrapper(options)),
-            _ => throw new ArgumentOutOfRangeException(nameof(providerType), providerType, null),
-        };
+    public ISecretsProvider GetProvider(Options options) => options switch
+    {
+        SopsOptions sopsOptions => new SopsSecretProvider(sopsOptions, new SopsProcessWrapper(sopsOptions)),
+        _ => throw new ArgumentOutOfRangeException(nameof(options), options, null),
+    };
 }
