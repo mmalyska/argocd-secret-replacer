@@ -1,4 +1,4 @@
-namespace ReplacerE2ETests;
+namespace ReplacerE2ETests.Utils;
 
 using System;
 using System.IO;
@@ -44,14 +44,30 @@ public class ConsoleOutput : IDisposable
 public class ConsoleInput : IDisposable
 {
     private TextReader originalInput;
-    private TextReader input;
+    private TextReader? input;
     private bool disposedValue;
 
-    public ConsoleInput(string text)
+    private ConsoleInput(string text)
     {
         input = new StringReader(text);
         originalInput = Console.In;
         Console.SetIn(input);
+    }
+
+    private ConsoleInput(TextReader reader)
+    {
+        originalInput = Console.In;
+        input = reader;
+        Console.SetIn(reader);
+    }
+
+    public static ConsoleInput FromFile(string filePath){
+        var reader = File.OpenText(filePath);
+        return new ConsoleInput(reader);
+    }
+
+    public static ConsoleInput FromString(string text){
+        return new ConsoleInput(text);
     }
 
     protected virtual void Dispose(bool disposing)
@@ -61,7 +77,7 @@ public class ConsoleInput : IDisposable
             if (disposing)
             {
                 Console.SetIn(originalInput);
-                input.Dispose();
+                input?.Dispose();
             }
             disposedValue = true;
         }

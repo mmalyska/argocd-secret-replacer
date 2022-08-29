@@ -25,9 +25,15 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="sops/**">
+        <Content Include="sops\**">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	    </Content>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="HelmManifestsReplacement\*.yaml">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
 </Project>

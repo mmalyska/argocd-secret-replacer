@@ -1,0 +1,18 @@
+---
+# Source: argocd-secret-replacer-example/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: argocd-secret-replacer-chart-example-secret
+data:
+  sample-secret: PHNlY3JldDpzZWNyZXRLZXk+
+  sample-secret-quoted: "PHNlY3JldDpzZWNyZXRLZXk+"
+type: Opaque
+---
+# Source: argocd-secret-replacer-example/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-secret-replacer-chart-example-configmap
+data:
+  sample-secret: secretValue1
