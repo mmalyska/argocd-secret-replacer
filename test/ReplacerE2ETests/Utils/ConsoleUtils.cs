@@ -68,8 +68,7 @@ public sealed class ConsoleInput : IDisposable
         return new ConsoleInput(reader);
     }
 
-    public static ConsoleInput FromString(string text)
-        => new ConsoleInput(text);
+    public static ConsoleInput FromString(string text) => new(text);
 
     private void Dispose(bool disposing)
     {

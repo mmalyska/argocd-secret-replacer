@@ -17,6 +17,6 @@ public static class YamlDeserializer
 
     private class SecretObject
     {
-        public Dictionary<string, string> Data { get; } = new();
+        public Dictionary<string, string> Data { get; set; } = new();
     }
 }
