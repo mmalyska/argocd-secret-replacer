@@ -1,6 +1,6 @@
 namespace ReplacerE2ETests;
 
-using System;
+using System.IO;
 using System.Threading.Tasks;
 using ReplacerE2ETests.Utils;
 using Xunit;
@@ -19,7 +19,7 @@ public class SopsYamlE2ETests
         var entryPoint = typeof(Program).Assembly.EntryPoint!;
         var options = new string[]{
             "sops",
-            "-f sops/sops.sec.yaml",
+            $"-f sops{Path.DirectorySeparatorChar}sops.sec.yaml",
         };
         var returnObject = entryPoint.Invoke(null, new object[] { options });
         if(returnObject is Task returnTask)

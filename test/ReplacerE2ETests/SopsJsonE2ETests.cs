@@ -1,6 +1,6 @@
 namespace ReplacerE2ETests;
 
-using System;
+using System.IO;
 using System.Threading.Tasks;
 using ReplacerE2ETests.Utils;
 using Xunit;
@@ -19,7 +19,7 @@ public class SopsJsonE2ETests
         var entryPoint = typeof(Program).Assembly.EntryPoint!;
         var options = new string[]{
             "sops",
-            "-f sops/sops.sec.json",
+            $"-f sops{Path.DirectorySeparatorChar}sops.sec.json",
         };
         var returnObject = entryPoint.Invoke(null, new object[] { options });
         if(returnObject is Task returnTask)
