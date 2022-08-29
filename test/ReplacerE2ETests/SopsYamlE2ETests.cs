@@ -6,7 +6,7 @@ using ReplacerE2ETests.Utils;
 using Xunit;
 
 [Collection("SopsEnv")]
-public class SopsJsonE2ETests
+public class SopsYamlE2ETests
 {
     [Fact]
     public async Task TestSimpleReplacement()
@@ -19,7 +19,7 @@ public class SopsJsonE2ETests
         var entryPoint = typeof(Program).Assembly.EntryPoint!;
         var options = new string[]{
             "sops",
-            "-f sops/sops.sec.json",
+            "-f sops/sops.sec.yaml",
         };
         var returnObject = entryPoint.Invoke(null, new object[] { options });
         if(returnObject is Task returnTask)

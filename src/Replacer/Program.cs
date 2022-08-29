@@ -29,5 +29,5 @@ static void RunOptions(object opts)
     ISecretReplacer replacer = new SecretReplacer(provider);
 
     var data = Console.In.ReadToEnd();
-    Console.Out.WriteLine(replacer.Replace(data));
+    Console.Out.Write(replacer.Replace(data));
 }
