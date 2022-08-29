@@ -10,11 +10,10 @@ if (!Console.IsInputRedirected)
     return;
 }
 
-using var loggerFactory = new LoggerFactory();
-
 var parser = Default.ParseArguments(args, typeof(SopsOptions))
     .WithNotParsed(errors =>
     {
+        using var loggerFactory = new LoggerFactory();
         var logger = loggerFactory.CreateLogger<Program>();
         LoggerMessages.LogErrorWrongParams(logger, string.Join(Environment.NewLine, errors.Select(error => error.ToString())));
         Environment.Exit(2);
@@ -24,7 +23,7 @@ parser.WithParsed(RunOptions);
 
 static void RunOptions(object opts)
 {
-    var providerFactory = new SecretsProviderFactory();
+    ISecretsProviderFactory providerFactory = new SecretsProviderFactory();
     var provider = providerFactory.GetProvider(opts);
     ISecretReplacer replacer = new SecretReplacer(provider);
 

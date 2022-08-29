@@ -11,7 +11,7 @@ public interface IProcessWrapper
 
 public abstract class SystemProcess : IProcessWrapper, IDisposable
 {
-    internal readonly Process process;
+    private readonly Process process;
     private bool disposedValue;
 
     protected SystemProcess()
@@ -27,16 +27,21 @@ public abstract class SystemProcess : IProcessWrapper, IDisposable
     public void Start() => process.Start();
     public Task WaitForExitAsync() => process.WaitForExitAsync();
 
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-                process.Dispose();
-            }
+    protected void SetStartInfo(ProcessStartInfo startInfo)
+        => process.StartInfo = startInfo;
 
-            disposedValue = true;
+    private void Dispose(bool disposing)
+    {
+        if (disposedValue)
+        {
+            return;
         }
+
+        if (disposing)
+        {
+            process.Dispose();
+        }
+
+        disposedValue = true;
     }
 }

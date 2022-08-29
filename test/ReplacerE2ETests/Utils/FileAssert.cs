@@ -12,31 +12,27 @@ public static class FileAssert
     {
         Assert.True(File.Exists(filename));
 
-        using (var hash = SHA1.Create())
-        {
-            var clearBytes = File.ReadAllBytes(filename);
-            var hashedBytes = hash.ComputeHash(clearBytes);
-            return ConvertBytesToHex(hashedBytes);
-        }
+        using var hash = SHA512.Create();
+        var clearBytes = File.ReadAllBytes(filename);
+        var hashedBytes = hash.ComputeHash(clearBytes);
+        return ConvertBytesToHex(hashedBytes);
     }
 
     private static string GetStringHash(string text)
     {
-        using (var hash = SHA1.Create())
-        {
-            var clearBytes = Encoding.ASCII.GetBytes(text);
-            var hashedBytes = hash.ComputeHash(clearBytes);
-            return ConvertBytesToHex(hashedBytes);
-        }
+        using var hash = SHA512.Create();
+        var clearBytes = Encoding.ASCII.GetBytes(text);
+        var hashedBytes = hash.ComputeHash(clearBytes);
+        return ConvertBytesToHex(hashedBytes);
     }
 
     private static string ConvertBytesToHex(byte[] bytes)
     {
         var sb = new StringBuilder();
 
-        for (var i = 0; i < bytes.Length; i++)
+        foreach (var t in bytes)
         {
-            sb.Append(bytes[i].ToString("x", CultureInfo.InvariantCulture));
+            sb.Append(t.ToString("x", CultureInfo.InvariantCulture));
         }
 
         return sb.ToString();

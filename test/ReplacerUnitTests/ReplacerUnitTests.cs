@@ -7,12 +7,11 @@ using Xunit;
 
 public class ReplacerTests
 {
-    private readonly ISecretsProvider emptySecretsProvider;
     private SecretReplacer replacer;
 
     public ReplacerTests()
     {
-        emptySecretsProvider = new SimpleSecretsProvider("");
+        ISecretsProvider emptySecretsProvider = new SimpleSecretsProvider("");
         replacer = new SecretReplacer(emptySecretsProvider);
     }
 
@@ -39,9 +38,9 @@ public class ReplacerTests
     [Fact]
     public void MultilineStringWithoutMatchShouldNotChange()
     {
-        var simpleString = @"aaaa something aaaa
+        const string simpleString = @"aaaa something aaaa
         bbbb different line
-        
+
         ";
 
         var result = replacer.Replace(simpleString);
@@ -52,8 +51,8 @@ public class ReplacerTests
     [Fact]
     public void StringWithExpressionShouldReplace()
     {
-        var simpleString = "aa<secret:path>bb";
-        var expectedString = "aa[replaced]bb";
+        const string simpleString = "aa<secret:path>bb";
+        const string expectedString = "aa[replaced]bb";
         var secretProvider = new SimpleSecretsProvider("[replaced]");
         replacer = new SecretReplacer(secretProvider);
 

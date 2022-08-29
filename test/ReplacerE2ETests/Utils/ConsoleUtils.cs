@@ -3,7 +3,7 @@ namespace ReplacerE2ETests.Utils;
 using System;
 using System.IO;
 
-public class ConsoleOutput : IDisposable
+public sealed class ConsoleOutput : IDisposable
 {
     private bool disposedValue;
     private readonly TextWriter originalOutput;
@@ -17,30 +17,29 @@ public class ConsoleOutput : IDisposable
     }
 
     public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
+        => Dispose(true);
 
-    public string GetOuput()
+    public string GetOutput()
         => stringWriter.ToString();
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (disposedValue)
         {
-            if (disposing)
-            {
-                Console.SetOut(originalOutput);
-                stringWriter.Dispose();
-            }
-
-            disposedValue = true;
+            return;
         }
+
+        if (disposing)
+        {
+            Console.SetOut(originalOutput);
+            stringWriter.Dispose();
+        }
+
+        disposedValue = true;
     }
 }
 
-public class ConsoleInput : IDisposable
+public sealed class ConsoleInput : IDisposable
 {
     private bool disposedValue;
     private readonly TextReader? input;
@@ -61,10 +60,7 @@ public class ConsoleInput : IDisposable
     }
 
     public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
+        => Dispose(true);
 
     public static ConsoleInput FromFile(string filePath)
     {
@@ -75,17 +71,19 @@ public class ConsoleInput : IDisposable
     public static ConsoleInput FromString(string text)
         => new ConsoleInput(text);
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (disposedValue)
         {
-            if (disposing)
-            {
-                Console.SetIn(originalInput);
-                input?.Dispose();
-            }
-
-            disposedValue = true;
+            return;
         }
+
+        if (disposing)
+        {
+            Console.SetIn(originalInput);
+            input?.Dispose();
+        }
+
+        disposedValue = true;
     }
 }

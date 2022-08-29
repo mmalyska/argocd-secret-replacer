@@ -24,6 +24,6 @@ public class HelmManifestsReplacementTests
             await returnTask;
         }
 
-        FileAssert.IsEqualToFile(expectedFile, consoleOutput.GetOuput());
+        FileAssert.IsEqualToFile(expectedFile, consoleOutput.GetOutput());
     }
 }

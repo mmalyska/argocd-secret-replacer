@@ -10,6 +10,6 @@ public class SopsProcessWrapper : SystemProcess
 
         var processStartInfo = new ProcessStartInfo { FileName = executable, Arguments = "-d " + options.File, RedirectStandardOutput = true };
 
-        process.StartInfo = processStartInfo;
+        SetStartInfo(processStartInfo);
     }
 }

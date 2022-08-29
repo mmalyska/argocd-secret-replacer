@@ -3,7 +3,7 @@ namespace Replacer.SecretsProvider.Sops;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-public class JsonDeserializer
+public static class JsonDeserializer
 {
     public static Dictionary<string, string> GetSecretValues(string input)
         => JsonSerializer.Deserialize(input, SourceGenerationContext.Default.DictionaryStringString) ?? new Dictionary<string, string>();

@@ -22,7 +22,7 @@ public class SimpleE2ETests
             await returnTask;
         }
 
-        Assert.Equal(inputText, consoleOutput.GetOuput());
+        Assert.Equal(inputText, consoleOutput.GetOutput());
     }
 
     [Fact]
@@ -40,6 +40,6 @@ public class SimpleE2ETests
             await returnTask;
         }
 
-        Assert.Equal(inputText, consoleOutput.GetOuput());
+        Assert.Equal(inputText, consoleOutput.GetOutput());
     }
 }

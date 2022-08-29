@@ -11,8 +11,8 @@ public class SopsYamlE2ETests
     [Fact]
     public async Task TestSimpleReplacement()
     {
-        var inputText = "A<secret:secretKey1>B";
-        var expectedOutput = "AsecretValue1B";
+        const string inputText = "A<secret:secretKey1>B";
+        const string expectedOutput = "AsecretValue1B";
         using var consoleOutput = new ConsoleOutput();
         using var consoleInput = ConsoleInput.FromString(inputText);
 
@@ -24,6 +24,6 @@ public class SopsYamlE2ETests
             await returnTask;
         }
 
-        Assert.Equal(expectedOutput, consoleOutput.GetOuput());
+        Assert.Equal(expectedOutput, consoleOutput.GetOutput());
     }
 }

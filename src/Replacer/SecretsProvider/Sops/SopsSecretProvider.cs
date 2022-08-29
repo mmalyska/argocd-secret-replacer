@@ -1,6 +1,6 @@
 ﻿namespace Replacer.SecretsProvider.Sops;
 
-public class SopsSecretProvider : ISecretsProvider, IDisposable
+public sealed class SopsSecretProvider : ISecretsProvider, IDisposable
 {
     private readonly IProcessWrapper process;
     private readonly string? sopsFile;
@@ -15,10 +15,7 @@ public class SopsSecretProvider : ISecretsProvider, IDisposable
     }
 
     public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
+        => Dispose(true);
 
     public async Task<string> GetSecretAsync(string key)
     {
@@ -58,16 +55,18 @@ public class SopsSecretProvider : ISecretsProvider, IDisposable
         };
     }
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (disposedValue)
         {
-            if (disposing)
-            {
-                semaphoreSlim.Dispose();
-            }
-
-            disposedValue = true;
+            return;
         }
+
+        if (disposing)
+        {
+            semaphoreSlim.Dispose();
+        }
+
+        disposedValue = true;
     }
 }

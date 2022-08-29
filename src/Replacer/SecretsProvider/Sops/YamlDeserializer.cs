@@ -3,7 +3,7 @@ namespace Replacer.SecretsProvider.Sops;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-public class YamlDeserializer
+public static class YamlDeserializer
 {
     public static Dictionary<string, string> GetSecretValues(string input)
     {
