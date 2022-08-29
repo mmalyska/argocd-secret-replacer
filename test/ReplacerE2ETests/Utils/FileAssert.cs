@@ -1,14 +1,14 @@
 namespace ReplacerE2ETests.Utils;
 
-using System.IO;
-using System.Text;
-using System.Security.Cryptography;
-using Xunit;
 using System.Globalization;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+using Xunit;
 
 public static class FileAssert
 {
-    static string GetFileHash(string filename)
+    private static string GetFileHash(string filename)
     {
         Assert.True(File.Exists(filename));
 
@@ -20,7 +20,7 @@ public static class FileAssert
         }
     }
 
-    static string GetStringHash(string text)
+    private static string GetStringHash(string text)
     {
         using (var hash = SHA1.Create())
         {
@@ -30,7 +30,7 @@ public static class FileAssert
         }
     }
 
-    static string ConvertBytesToHex(byte[] bytes)
+    private static string ConvertBytesToHex(byte[] bytes)
     {
         var sb = new StringBuilder();
 
@@ -38,13 +38,14 @@ public static class FileAssert
         {
             sb.Append(bytes[i].ToString("x", CultureInfo.InvariantCulture));
         }
+
         return sb.ToString();
     }
 
     public static void IsEqualToFile(string file, string output)
     {
-        string hash1 = GetFileHash(file);
-        string hash2 = GetStringHash(output);
+        var hash1 = GetFileHash(file);
+        var hash2 = GetStringHash(output);
 
         Assert.Equal(hash1, hash2);
     }

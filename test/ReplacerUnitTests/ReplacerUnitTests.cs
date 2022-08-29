@@ -1,16 +1,14 @@
-using Xunit;
-
 namespace ReplacerUnitTests;
 
-using System;
 using Common;
 using Replacer.SecretsProvider;
 using Replacer.Substitution;
+using Xunit;
 
 public class ReplacerTests
 {
-    private SecretReplacer replacer;
     private readonly ISecretsProvider emptySecretsProvider;
+    private SecretReplacer replacer;
 
     public ReplacerTests()
     {
@@ -21,7 +19,7 @@ public class ReplacerTests
     [Fact]
     public void EmptyStringShouldReturnEmpty()
     {
-        const string  simpleString = "";
+        const string simpleString = "";
 
         var result = replacer.Replace(simpleString);
 

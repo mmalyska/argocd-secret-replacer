@@ -10,8 +10,12 @@ public class SopsEnvironmentFixture : IDisposable
     private bool disposedValue;
 
     public SopsEnvironmentFixture()
+        => Environment.SetEnvironmentVariable(sops_age_env, sops_file_location);
+
+    public void Dispose()
     {
-        Environment.SetEnvironmentVariable(sops_age_env, sops_file_location);
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
     protected virtual void Dispose(bool disposing)
@@ -26,13 +30,9 @@ public class SopsEnvironmentFixture : IDisposable
             disposedValue = true;
         }
     }
-
-    public void Dispose()
-    {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
-    }
 }
 
 [CollectionDefinition("SopsEnv")]
-public class SopsEnv : ICollectionFixture<SopsEnvironmentFixture>{}
+public class SopsEnv : ICollectionFixture<SopsEnvironmentFixture>
+{
+}

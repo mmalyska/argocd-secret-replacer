@@ -1,19 +1,23 @@
 ﻿namespace Replacer.SecretsProvider.Sops;
 
-using System.Collections.Generic;
-
 public class SopsSecretProvider : ISecretsProvider, IDisposable
 {
-    private readonly string? sopsFile;
-    private Dictionary<string, string>? secretValues;
-    private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1);
-    private bool disposedValue;
     private readonly IProcessWrapper process;
+    private readonly string? sopsFile;
+    private bool disposedValue;
+    private Dictionary<string, string>? secretValues;
+    private readonly SemaphoreSlim semaphoreSlim = new(1);
 
     public SopsSecretProvider(SopsOptions options, IProcessWrapper processWrapper)
     {
         sopsFile = options.File ?? throw new ArgumentNullException(nameof(options));
-        process = processWrapper ?? throw  new ArgumentNullException(nameof(processWrapper));
+        process = processWrapper ?? throw new ArgumentNullException(nameof(processWrapper));
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
     public async Task<string> GetSecretAsync(string key)
@@ -30,11 +34,13 @@ public class SopsSecretProvider : ISecretsProvider, IDisposable
                 semaphoreSlim.Release();
             }
         }
+
         secretValues!.TryGetValue(key, out var value);
         return value ?? string.Empty;
     }
 
-    private async Task DecodeSecretsAsync(){
+    private async Task DecodeSecretsAsync()
+    {
         if (secretValues is not null)
         {
             return;
@@ -63,11 +69,5 @@ public class SopsSecretProvider : ISecretsProvider, IDisposable
 
             disposedValue = true;
         }
-    }
-
-    public void Dispose()
-    {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }

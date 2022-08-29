@@ -1,11 +1,6 @@
 ﻿namespace Replacer.SecretsProvider;
 
-using Replacer.SecretsProvider.Sops;
-
-public enum SecretProviderTypes
-{
-    sops,
-}
+using Sops;
 
 public interface ISecretsProviderFactory
 {

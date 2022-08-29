@@ -1,9 +1,9 @@
 ﻿using CommandLine;
 using Microsoft.Extensions.Logging;
-using static CommandLine.Parser;
 using Replacer;
 using Replacer.SecretsProvider;
 using Replacer.Substitution;
+using static CommandLine.Parser;
 
 if (!Console.IsInputRedirected)
 {

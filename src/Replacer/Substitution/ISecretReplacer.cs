@@ -15,9 +15,7 @@ public class SecretReplacer : ISecretReplacer
     private readonly ISecretsProvider secretsProvider;
 
     public SecretReplacer(ISecretsProvider secretsProvider)
-    {
-        this.secretsProvider = secretsProvider ?? throw new ArgumentNullException(nameof(secretsProvider));
-    }
+        => this.secretsProvider = secretsProvider ?? throw new ArgumentNullException(nameof(secretsProvider));
 
     public string Replace(string line)
         => regexKey.Replace(line, match => Evaluator(match, secretsProvider));
@@ -27,6 +25,8 @@ public class SecretReplacer : ISecretReplacer
         var path = match.Groups["path"].Value;
         var modifiers = match.Groups["modifiers"].Value.Split('|');
         var secret = secretsProvider.GetSecretAsync(path).Result;
-        return match.Success ? secret : match.Value;
+        return match.Success
+            ? secret
+            : match.Value;
     }
 }
