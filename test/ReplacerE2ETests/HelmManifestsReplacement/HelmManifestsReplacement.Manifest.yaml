@@ -15,4 +15,4 @@ kind: ConfigMap
 metadata:
   name: argocd-secret-replacer-chart-example-configmap
 data:
-  sample-secret: <secret:anotherKey>
+  sample-secret: <secret:secretKey1>
