@@ -1,27 +1,24 @@
-using Xunit;
-
 namespace ReplacerUnitTests;
 
-using System;
 using Common;
 using Replacer.SecretsProvider;
 using Replacer.Substitution;
+using Xunit;
 
 public class ReplacerTests
 {
     private SecretReplacer replacer;
-    private readonly ISecretsProvider emptySecretsProvider;
 
     public ReplacerTests()
     {
-        emptySecretsProvider = new SimpleSecretsProvider("");
+        ISecretsProvider emptySecretsProvider = new SimpleSecretsProvider("");
         replacer = new SecretReplacer(emptySecretsProvider);
     }
 
     [Fact]
     public void EmptyStringShouldReturnEmpty()
     {
-        const string  simpleString = "";
+        const string simpleString = "";
 
         var result = replacer.Replace(simpleString);
 
@@ -41,9 +38,9 @@ public class ReplacerTests
     [Fact]
     public void MultilineStringWithoutMatchShouldNotChange()
     {
-        var simpleString = @"aaaa something aaaa
+        const string simpleString = @"aaaa something aaaa
         bbbb different line
-        
+
         ";
 
         var result = replacer.Replace(simpleString);
@@ -54,8 +51,8 @@ public class ReplacerTests
     [Fact]
     public void StringWithExpressionShouldReplace()
     {
-        var simpleString = "aa<secret:path>bb";
-        var expectedString = "aa[replaced]bb";
+        const string simpleString = "aa<secret:path>bb";
+        const string expectedString = "aa[replaced]bb";
         var secretProvider = new SimpleSecretsProvider("[replaced]");
         replacer = new SecretReplacer(secretProvider);
 

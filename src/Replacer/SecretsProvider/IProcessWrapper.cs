@@ -9,36 +9,39 @@ public interface IProcessWrapper
     Task WaitForExitAsync();
 }
 
-public abstract class SystemProcess: IProcessWrapper, IDisposable
+public abstract class SystemProcess : IProcessWrapper, IDisposable
 {
-    internal readonly Process process;
+    private readonly Process process;
     private bool disposedValue;
 
     protected SystemProcess()
+        => process = new Process();
+
+    public void Dispose()
     {
-        process = new Process();
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
     public StreamReader StandardOutput => process.StandardOutput;
     public void Start() => process.Start();
     public Task WaitForExitAsync() => process.WaitForExitAsync();
 
-    protected virtual void Dispose(bool disposing)
+    protected void SetStartInfo(ProcessStartInfo startInfo)
+        => process.StartInfo = startInfo;
+
+    private void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (disposedValue)
         {
-            if (disposing)
-            {
-                process.Dispose();
-            }
-
-            disposedValue = true;
+            return;
         }
-    }
 
-    public void Dispose()
-    {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
+        if (disposing)
+        {
+            process.Dispose();
+        }
+
+        disposedValue = true;
     }
 }

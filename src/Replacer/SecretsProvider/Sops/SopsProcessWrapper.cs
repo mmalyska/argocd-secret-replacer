@@ -4,17 +4,12 @@ using System.Diagnostics;
 
 public class SopsProcessWrapper : SystemProcess
 {
-    public SopsProcessWrapper(SopsOptions options): base()
+    public SopsProcessWrapper(SopsOptions options)
     {
         var executable = Environment.GetEnvironmentVariable("ARGOCD_ENV_SOPS_EXE") ?? "sops";
 
-        var processStartInfo = new ProcessStartInfo
-        {
-            FileName = executable,
-            Arguments = "-d " + options.File,
-            RedirectStandardOutput = true
-        };
+        var processStartInfo = new ProcessStartInfo { FileName = executable, Arguments = "-d " + options.File, RedirectStandardOutput = true };
 
-        process.StartInfo = processStartInfo;
+        SetStartInfo(processStartInfo);
     }
 }

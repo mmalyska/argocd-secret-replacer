@@ -3,11 +3,11 @@ namespace ReplacerE2ETests.Utils;
 using System;
 using System.IO;
 
-public class ConsoleOutput : IDisposable
+public sealed class ConsoleOutput : IDisposable
 {
-    private StringWriter stringWriter;
-    private TextWriter originalOutput;
     private bool disposedValue;
+    private readonly TextWriter originalOutput;
+    private readonly StringWriter stringWriter;
 
     public ConsoleOutput()
     {
@@ -16,36 +16,34 @@ public class ConsoleOutput : IDisposable
         Console.SetOut(stringWriter);
     }
 
-    public string GetOuput()
-    {
-        return stringWriter.ToString();
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-                Console.SetOut(originalOutput);
-                stringWriter.Dispose();
-            }
-            disposedValue = true;
-        }
-    }
-
     public void Dispose()
+        => Dispose(true);
+
+    public string GetOutput()
+        => stringWriter.ToString();
+
+    private void Dispose(bool disposing)
     {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
+        if (disposedValue)
+        {
+            return;
+        }
+
+        if (disposing)
+        {
+            Console.SetOut(originalOutput);
+            stringWriter.Dispose();
+        }
+
+        disposedValue = true;
     }
 }
 
-public class ConsoleInput : IDisposable
+public sealed class ConsoleInput : IDisposable
 {
-    private TextReader originalInput;
-    private TextReader? input;
     private bool disposedValue;
+    private readonly TextReader? input;
+    private readonly TextReader originalInput;
 
     private ConsoleInput(string text)
     {
@@ -61,31 +59,30 @@ public class ConsoleInput : IDisposable
         Console.SetIn(reader);
     }
 
-    public static ConsoleInput FromFile(string filePath){
+    public void Dispose()
+        => Dispose(true);
+
+    public static ConsoleInput FromFile(string filePath)
+    {
         var reader = File.OpenText(filePath);
         return new ConsoleInput(reader);
     }
 
-    public static ConsoleInput FromString(string text){
-        return new ConsoleInput(text);
-    }
+    public static ConsoleInput FromString(string text) => new(text);
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (disposedValue)
         {
-            if (disposing)
-            {
-                Console.SetIn(originalInput);
-                input?.Dispose();
-            }
-            disposedValue = true;
+            return;
         }
-    }
 
-    public void Dispose()
-    {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
+        if (disposing)
+        {
+            Console.SetIn(originalInput);
+            input?.Dispose();
+        }
+
+        disposedValue = true;
     }
 }

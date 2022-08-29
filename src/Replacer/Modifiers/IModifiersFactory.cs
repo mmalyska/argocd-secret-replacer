@@ -2,10 +2,8 @@
 
 public interface IModifiersFactory
 {
-
 }
 
 public class ModifiersFactory : IModifiersFactory
 {
-
 }

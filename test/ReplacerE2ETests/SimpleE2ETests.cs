@@ -2,7 +2,7 @@ namespace ReplacerE2ETests;
 
 using System;
 using System.Threading.Tasks;
-using ReplacerE2ETests.Utils;
+using Utils;
 using Xunit;
 
 public class SimpleE2ETests
@@ -15,35 +15,31 @@ public class SimpleE2ETests
         using var consoleInput = ConsoleInput.FromString(inputText);
 
         var entryPoint = typeof(Program).Assembly.EntryPoint!;
-        var options = new string[]{
-            "sops"
-        };
+        var options = new[] { "sops" };
         var returnObject = entryPoint.Invoke(null, new object[] { options });
-        if(returnObject is Task returnTask)
+        if (returnObject is Task returnTask)
         {
             await returnTask;
         }
 
-        Assert.Equal(inputText, consoleOutput.GetOuput());
+        Assert.Equal(inputText, consoleOutput.GetOutput());
     }
 
     [Fact]
     public async Task TestSimpleMultiline()
     {
-        string inputText = "B" + Environment.NewLine + "C";
+        var inputText = "B" + Environment.NewLine + "C";
         using var consoleOutput = new ConsoleOutput();
         using var consoleInput = ConsoleInput.FromString(inputText);
 
         var entryPoint = typeof(Program).Assembly.EntryPoint!;
-        var options = new string[]{
-            "sops"
-        };
+        var options = new[] { "sops" };
         var returnObject = entryPoint.Invoke(null, new object[] { options });
-        if(returnObject is Task returnTask)
+        if (returnObject is Task returnTask)
         {
             await returnTask;
         }
 
-        Assert.Equal(inputText, consoleOutput.GetOuput());
+        Assert.Equal(inputText, consoleOutput.GetOutput());
     }
 }
