@@ -5,8 +5,8 @@ kind: Secret
 metadata:
   name: argocd-secret-replacer-chart-example-secret
 data:
-  sample-secret: PHNlY3JldDpzZWNyZXRLZXk+
-  sample-secret-quoted: "PHNlY3JldDpzZWNyZXRLZXk+"
+  sample-secret: c2VjcmV0VmFsdWUx
+  sample-secret-quoted: "c2VjcmV0VmFsdWUx"
 type: Opaque
 ---
 # Source: argocd-secret-replacer-example/templates/configmap.yaml
