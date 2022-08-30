@@ -8,7 +8,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Before you begin to fill out the form, make sure you have actually found a bug.
+        Thanks for taking the time to fill out this bug report!
         Check if there is no similar bug issue created.
   - type: dropdown
     id: os-running-on
