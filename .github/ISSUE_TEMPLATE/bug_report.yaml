@@ -1,0 +1,52 @@
+---
+name: Bug report
+description: Create a report to help us improve
+title: "[BUG]: "
+labels: ["possible bug"]
+assignees: mmalyska
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before you begin to fill out the form, make sure you have actually found a bug.
+        Check if there is no similar bug issue created.
+  - type: dropdown
+    id: os-running-on
+    attributes:
+      label: What os you're running application on?
+      options:
+        - 'Linux'
+        - 'MacOS'
+        - 'Windows'
+    validations:
+      required: true
+
+  - type: input
+    id: version-running
+    attributes:
+      label: What version of application you are running?
+    validations:
+      required: false
+
+  - type: textarea
+    id: describe-bug
+    attributes:
+      label: Describe the bug
+      description: 'A clear and concise description of what the bug is.'
+    validations:
+      required: true
+
+  - type: textarea
+    id: example-manifests
+    attributes:
+      label: Example manifest that is not working
+      description: |
+        Paste faulty manifest and example secret file
+      value: |
+        <details><summary>Manifest</summary>
+        ```
+        Copy/paste manifests here, between the starting and ending backticks
+        ```
+        </details>
+    validations:
+      required: false
