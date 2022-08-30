@@ -2,14 +2,14 @@ namespace Replacer.SecretsProvider;
 
 using System.Diagnostics;
 
-public interface IProcessWrapper
+public interface IProcessWrapper : IDisposable
 {
     StreamReader StandardOutput { get; }
     void Start();
     Task WaitForExitAsync();
 }
 
-public abstract class SystemProcess : IProcessWrapper, IDisposable
+public abstract class SystemProcess : IProcessWrapper
 {
     private readonly Process process;
     private bool disposedValue;

@@ -33,7 +33,7 @@ public class SecretReplacer : ISecretReplacer
     {
         var path = match.Groups["path"].Value;
         var modifiers = match.Groups["modifiers"].Value.Split('|');
-        var secret = secretsProvider.GetSecretAsync(path).Result;
+        var secret = secretsProvider.GetSecret(path);
         return match.Success
             ? secret
             : match.Value;

@@ -6,32 +6,19 @@ public sealed class SopsSecretProvider : ISecretsProvider, IDisposable
     private readonly string? sopsFile;
     private bool disposedValue;
     private Dictionary<string, string>? secretValues;
-    private readonly SemaphoreSlim semaphoreSlim = new(1);
 
     public SopsSecretProvider(SopsOptions options, IProcessWrapper processWrapper)
     {
         sopsFile = options.File ?? throw new ArgumentNullException(nameof(options));
         process = processWrapper ?? throw new ArgumentNullException(nameof(processWrapper));
+        DecodeSecretsAsync().Wait();
     }
 
     public void Dispose()
         => Dispose(true);
 
-    public async Task<string> GetSecretAsync(string key)
+    public string GetSecret(string key)
     {
-        if (secretValues is null)
-        {
-            await semaphoreSlim.WaitAsync();
-            try
-            {
-                await DecodeSecretsAsync();
-            }
-            finally
-            {
-                semaphoreSlim.Release();
-            }
-        }
-
         secretValues!.TryGetValue(key, out var value);
         return value ?? string.Empty;
     }
@@ -64,7 +51,7 @@ public sealed class SopsSecretProvider : ISecretsProvider, IDisposable
 
         if (disposing)
         {
-            semaphoreSlim.Dispose();
+            process.Dispose();
         }
 
         disposedValue = true;

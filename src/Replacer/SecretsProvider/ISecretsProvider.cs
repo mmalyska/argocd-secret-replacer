@@ -2,5 +2,5 @@
 
 public interface ISecretsProvider
 {
-    Task<string> GetSecretAsync(string key);
+    string GetSecret(string key);
 }

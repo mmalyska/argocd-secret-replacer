@@ -10,6 +10,6 @@ public class SimpleSecretsProvider : ISecretsProvider
     public SimpleSecretsProvider(string staticSecret)
         => this.staticSecret = staticSecret;
 
-    public Task<string> GetSecretAsync(string key)
-        => Task.FromResult(staticSecret);
+    public string GetSecret(string key)
+        => staticSecret;
 }
