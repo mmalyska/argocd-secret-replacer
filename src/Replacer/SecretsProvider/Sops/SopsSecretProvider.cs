@@ -25,11 +25,6 @@ public sealed class SopsSecretProvider : ISecretsProvider, IDisposable
 
     private async Task DecodeSecretsAsync()
     {
-        if (secretValues is not null)
-        {
-            return;
-        }
-
         process.Start();
         var serializedData = await process.StandardOutput.ReadToEndAsync();
         await process.WaitForExitAsync();
