@@ -1,0 +1,50 @@
+﻿---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-repo-server
+spec:
+  template:
+    spec:
+      volumes:
+        - name: custom-tools
+          emptyDir: {}
+        - name: sops-age
+          secret:
+            secretName: sops-age
+      initContainers:
+        - name: download-tools
+          image: alpine:latest
+          command: [sh, -ec]
+          env:
+            - name: SOPS_VERSION
+              value: "v3.7.3"
+            - name: REPLACER_VERSION
+              value: "v0.0.3"
+          args:
+            - |
+              echo "Downloading secret replacer...";
+              wget -qO- https://github.com/mmalyska/argocd-secret-replacer/releases/download/${REPLACER_VERSION}/secret-replacer-${REPLACER_VERSION}-linux-x64.tar.gz | tar -C /custom-tools -xzf-;
+
+              echo "Setting executable mode...";
+              chmod +x /custom-tools/*
+          volumeMounts:
+            - mountPath: /custom-tools
+              name: custom-tools
+      containers:
+        - name: argocd-repo-server
+          volumeMounts:
+            - mountPath: /custom-tools/sops
+              name: custom-tools
+              subPath: sops
+            - mountPath: /sops-age/key
+              name: sops-age
+              subPath: age.agekey
+            - mountPath: /usr/local/bin/argocd-secret-replacer
+              name: custom-tools
+              subPath: argocd-secret-replacer
+          env:
+            - name: SOPS_AGE_KEY_FILE
+              value: /sops-age/key
+            - name: ARGOCD_ENV_SOPS_EXE
+              value: /custom-tools/sops
