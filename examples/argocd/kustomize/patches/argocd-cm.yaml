@@ -1,0 +1,18 @@
+﻿---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+data:
+  configManagementPlugins: |
+    - name: replacer-helm
+      init:
+        command: ["/bin/sh", "-c"]
+        args: ["helm dependency build"]
+      generate:
+        command: [sh, -c]
+        args: ["helm template --release-name $ARGOCD_APP_NAME --namespace $ARGOCD_APP_NAMESPACE . | argocd-secret-replacer sops -f $ARGOCD_ENV_SOPS_FILE"]
+    - name: replacer-kustomize
+      generate:
+        command: ["sh", "-c"]
+        args: ["kustomize build . | argocd-secret-replacer sops -f $ARGOCD_ENV_SOPS_FILE"]

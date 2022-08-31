@@ -1,0 +1,4 @@
+﻿secret:
+  sampleSecret: <secret:secretKey>
+  sampleSecretQuoted: <secret:secretKey>
+configMap: <secret:anotherKey>
