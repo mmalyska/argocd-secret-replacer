@@ -7,6 +7,7 @@ metadata:
 data:
   sample-secret: PHNlY3JldDpzZWNyZXRLZXkxPg==
   sample-secret-quoted: "PHNlY3JldDpzZWNyZXRLZXkxPg=="
+  sample-secret-multiline: b3B0aW9uczoNCiAgYWNjZXNzVG9rZW46IDxzZWNyZXQ6bXVsdGlsaW5lS2V5MT4NCiAgc2VjcmV0TmVlZGVkOiA8c2VjcmV0Om11bHRpbGluZUtleTI+
 type: Opaque
 ---
 # Source: argocd-secret-replacer-example/templates/configmap.yaml
@@ -16,3 +17,7 @@ metadata:
   name: argocd-secret-replacer-chart-example-configmap
 data:
   sample-secret: <secret:secretKey1>
+  sample-secret-multiline: |
+    options:
+      accessToken: <secret:multilineKey1>
+      secretNeeded: <secret:multilineKey2>
