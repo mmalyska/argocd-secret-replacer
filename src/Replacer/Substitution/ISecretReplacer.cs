@@ -12,7 +12,7 @@ public interface ISecretReplacer
 
 public class SecretReplacer : ISecretReplacer
 {
-    private const string Pattern = @"<[ \t]*(?<store>secret|sops):(?<path>[^\r\n\|]*)\|?(?<modifiers>[^\r\n]*)>";
+    private const string Pattern = @"<[ \t]*(?<store>secret|sops):(?<path>[^\r\n\|>]*)\|?(?<modifiers>[^\r\n>]*)>";
     private const string Base64Pattern = @"[A-Za-z0-9\+\/\=]{10,}";
     private readonly Regex regexKey = new(Pattern, RegexOptions.Singleline | RegexOptions.Compiled);
     private readonly Regex regexBase64 = new(Base64Pattern, RegexOptions.Singleline | RegexOptions.Compiled);
