@@ -61,6 +61,8 @@ jobs:
           # Pack files
           if [ "${{ matrix.target }}" == "win-x64" ]; then
             7z a -tzip "./out/${{ env.release_name }}.zip" ./publish/*
+          elif [ "${{ matrix.target }}" == "osx-x64" ]; then
+            mkdir -p out && cd publish && tar --mode='og-w' -czf "../out/${{ env.release_name }}.tar.gz" * && cd -
           else
             mkdir -p out && cd publish && tar --owner=0 --group=0 --mode='og-w' -czf "../out/${{ env.release_name }}.tar.gz" * && cd -
           fi
