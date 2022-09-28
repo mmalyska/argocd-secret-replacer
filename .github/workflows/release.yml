@@ -25,6 +25,10 @@ jobs:
           - kind: macOS
             os: macos-latest
             target: osx-x64
+          - kind: linux-musl
+            os: ubuntu-latest
+            target: linux-musl-x64
+
 
     name: Release
     runs-on: ${{ matrix.os }}
