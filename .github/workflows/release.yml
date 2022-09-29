@@ -28,6 +28,9 @@ jobs:
           - kind: linux-musl
             os: ubuntu-latest
             target: linux-musl-x64
+          - kind: linux-arm
+            os: ubuntu-latest
+            target: linux-arm64
 
 
     name: Release
