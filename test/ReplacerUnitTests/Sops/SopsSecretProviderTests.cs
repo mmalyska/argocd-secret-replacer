@@ -35,7 +35,7 @@ public class SopsSecretProviderTests
         Assert.Equal("val1", result);
     }
 
-    private class StaticProcessWrapper : IProcessWrapper
+    private sealed class StaticProcessWrapper : IProcessWrapper
     {
         private readonly MemoryStream memoryStream;
         private readonly StreamWriter writer;

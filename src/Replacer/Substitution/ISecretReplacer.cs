@@ -10,12 +10,8 @@ public interface ISecretReplacer
     public string Replace(string line);
 }
 
-public class SecretReplacer : ISecretReplacer
+public partial class SecretReplacer : ISecretReplacer
 {
-    private const string Pattern = @"<[ \t]*(?<store>secret|sops):(?<path>[^\r\n\|>]*)\|?(?<modifiers>[^\r\n>]*)>";
-    private const string Base64Pattern = @"[A-Za-z0-9\+\/\=]{10,}";
-    private readonly Regex regexKey = new(Pattern, RegexOptions.Singleline | RegexOptions.Compiled);
-    private readonly Regex regexBase64 = new(Base64Pattern, RegexOptions.Singleline | RegexOptions.Compiled);
     private readonly ISecretsProvider secretsProvider;
     private readonly IModifiersFactory modifiersFactory;
 
@@ -29,10 +25,10 @@ public class SecretReplacer : ISecretReplacer
         => ReplaceKey(ReplaceBase64(line));
 
     private string ReplaceBase64(string line)
-        => regexBase64.Replace(line, Base64Evaluator);
+        => RegexBase64Generated().Replace(line, Base64Evaluator);
 
     private string ReplaceKey(string line)
-        => regexKey.Replace(line, Evaluator);
+        => RegexKeyGenerated().Replace(line, Evaluator);
 
     private string Evaluator(Match match)
     {
@@ -87,4 +83,9 @@ public class SecretReplacer : ISecretReplacer
         var bytes = Encoding.UTF8.GetBytes(data);
         return Convert.ToBase64String(bytes);
     }
+
+    [GeneratedRegex("<[ \\t]*(?<store>secret|sops):(?<path>[^\\r\\n\\|>]*)\\|?(?<modifiers>[^\\r\\n>]*)>", RegexOptions.Compiled | RegexOptions.Singleline)]
+    private static partial Regex RegexKeyGenerated();
+    [GeneratedRegex("[A-Za-z0-9\\+\\/\\=]{10,}", RegexOptions.Compiled | RegexOptions.Singleline)]
+    private static partial Regex RegexBase64Generated();
 }
