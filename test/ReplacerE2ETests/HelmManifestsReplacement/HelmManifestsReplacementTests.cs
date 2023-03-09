@@ -9,7 +9,7 @@ using Xunit;
 public class HelmManifestsReplacementTests
 {
     [Fact]
-    public async void TestReplacements()
+    public async Task TestReplacements()
     {
         var inputFile = $"HelmManifestsReplacement{Path.DirectorySeparatorChar}HelmManifestsReplacement.Manifest.yaml";
         var expectedFile = $"HelmManifestsReplacement{Path.DirectorySeparatorChar}HelmManifestsReplacement.Manifest.expected.yaml";

@@ -15,7 +15,7 @@ public static class YamlDeserializer
         return obj.Data;
     }
 
-    private class SecretObject
+    private sealed class SecretObject
     {
         public Dictionary<string, string> Data { get; set; } = new();
     }
