@@ -20,8 +20,4 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-  </ItemGroup>
-
 </Project>
