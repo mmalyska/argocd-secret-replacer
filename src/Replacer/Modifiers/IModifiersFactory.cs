@@ -16,7 +16,8 @@ public class ModifiersFactory : IModifiersFactory
             .GetAssemblies()
             .SelectMany(s => s.GetTypes())
             .Where(t => t.GetInterfaces().Contains(typeof(IModifier)))
-            .Select(t => (IModifier)Activator.CreateInstance(t)!);
+            .Select(t => Activator.CreateInstance(t) as IModifier)
+            .Where(m => m is not null)!;
 
     public IModifier? GetModifier(string name)
         => modifiersAvailable.SingleOrDefault(t => t.Key == name);
