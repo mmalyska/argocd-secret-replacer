@@ -11,18 +11,15 @@ public static class FileAssert
     private static string GetFileHash(string filename)
     {
         Assert.True(File.Exists(filename));
-
-        using var hash = SHA512.Create();
         var clearBytes = File.ReadAllBytes(filename);
-        var hashedBytes = hash.ComputeHash(clearBytes);
+        var hashedBytes = SHA512.HashData(clearBytes);
         return ConvertBytesToHex(hashedBytes);
     }
 
     private static string GetStringHash(string text)
     {
-        using var hash = SHA512.Create();
         var clearBytes = Encoding.ASCII.GetBytes(text);
-        var hashedBytes = hash.ComputeHash(clearBytes);
+        var hashedBytes = SHA512.HashData(clearBytes);
         return ConvertBytesToHex(hashedBytes);
     }
 
