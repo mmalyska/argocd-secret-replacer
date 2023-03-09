@@ -32,20 +32,20 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~\sonar\cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
-      - name: Cache SonarCloud scanner
-        id: cache-sonar-scanner
-        uses: actions/cache@v3
-        with:
-          path: .\.sonar\scanner
-          key: ${{ runner.os }}-sonar-scanner
-          restore-keys: ${{ runner.os }}-sonar-scanner
+#      - name: Cache SonarCloud packages
+#        uses: actions/cache@v3
+#        with:
+#          path: ~\sonar\cache
+#          key: ${{ matrix.os }}-sonar
+#          restore-keys: ${{ matrix.os }}-sonar
+#
+#      - name: Cache SonarCloud scanner
+#        id: cache-sonar-scanner
+#        uses: actions/cache@v3
+#        with:
+#          path: .\.sonar\scanner
+#          key: ${{ matrix.os }}-sonar-scanner
+#          restore-keys: ${{ matrix.os }}-sonar-scanner
 
 #      - name: Install SonarQube scanner
 #        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
