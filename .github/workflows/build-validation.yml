@@ -47,10 +47,7 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar-scanner
       - name: Install SonarQube scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
-        shell: powershell
-        run: |
-          New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+        run: dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
       - name: Sops Binary Installer
         uses: mdgreenwald/mozilla-sops-action@v1.2.0
@@ -66,16 +63,23 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
 
-      - name: Build and Test
+      - name: Start scanner
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
-        run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"mmalyska_argocd-secret-replacer" /o:"mmalyska" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          dotnet build --configuration Release --no-restore
-          dotnet test --no-restore --verbosity normal --logger trx --results-directory "TestResults-${{ matrix.os }}"
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"mmalyska_argocd-secret-replacer" /o:"mmalyska" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal --logger trx --results-directory "TestResults-${{ matrix.os }}"
+
+      - name: Stop scanner
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
       - name: Upload dotnet test results
         uses: actions/upload-artifact@v3
