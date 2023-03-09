@@ -47,9 +47,9 @@ jobs:
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
 
-      - name: Install SonarQube scanner
-        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
-        run: dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+#      - name: Install SonarQube scanner
+#        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+#        run: dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
       - name: Sops Binary Installer
         uses: mdgreenwald/mozilla-sops-action@v1.2.0
