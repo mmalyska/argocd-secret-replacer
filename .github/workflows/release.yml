@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        kind: [ 'linux', 'windows', 'macOS', 'linux-musl', 'linux-arm' ]
+        kind: [ 'linux', 'windows', 'macOS', 'macOS-arm', 'linux-musl', 'linux-arm', 'linux-musl-arm' ]
         include:
           - kind: linux
             os: ubuntu-latest
@@ -25,12 +25,18 @@ jobs:
           - kind: macOS
             os: macos-latest
             target: osx-x64
+          - kind: macOS-arm
+            os: macos-latest
+            target: osx-arm64
           - kind: linux-musl
             os: ubuntu-latest
             target: linux-musl-x64
           - kind: linux-arm
             os: ubuntu-latest
             target: linux-arm64
+          - kind: linux-musl-arm
+            os: ubuntu-latest
+            target: linux-musl-arm64
 
 
     name: Release
