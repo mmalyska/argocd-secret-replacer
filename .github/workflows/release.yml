@@ -44,6 +44,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Install musl-tools
+        if: ${{ matrix.target == 'linux-musl-arm64' || matrix.target == 'linux-musl-x64' }}
+        run: |
+          sudo apt-get install -y musl-tools
+
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v2
         with:
