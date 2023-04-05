@@ -7,9 +7,9 @@ metadata:
 namespace: argocd
 
 resources:
-  - https://github.com/argoproj/argo-cd/manifests/cluster-install?ref=v2.4.11
+  - https://github.com/argoproj/argo-cd/manifests/cluster-install?ref=v2.6.7
   - resources/sops-age-secret.yaml
+  - resources/sops-replacer-plugin.yaml
 
 patchesStrategicMerge:
-  - patches/argocd-cm.yaml
   - patches/argo-cd-repo-server.yaml
