@@ -32,6 +32,11 @@ public partial class SecretReplacer : ISecretReplacer
 
     private string Evaluator(Match match)
     {
+        if (!match.Success)
+        {
+            return match.Value;
+        }
+
         var path = match.Groups["path"].Value;
         var modifiers = match.Groups["modifiers"].Value.Split('|', StringSplitOptions.RemoveEmptyEntries);
         var secret = secretsProvider.GetSecret(path);
@@ -40,9 +45,7 @@ public partial class SecretReplacer : ISecretReplacer
             var modifier = modifiersFactory.GetModifier(modifierName);
             secret = modifier?.Apply(secret) ?? secret;
         }
-        return match.Success
-            ? secret
-            : match.Value;
+        return secret;
     }
 
     private string Base64Evaluator(Group match)
