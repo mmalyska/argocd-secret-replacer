@@ -17,7 +17,8 @@ permissions:
   checks: write
 
 env:
-  DOTNET_VERSION: '7.*'
+  JAVA_VERSION: '21'
+  DOTNET_VERSION: '8.*'
 
 jobs:
   build:
@@ -33,13 +34,37 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'microsoft'
+          java-version: ${{ env.JAVA_VERSION }}
+
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+      
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
 
-      - name: Install SonarQube scanner
-        run: dotnet tool install --global dotnet-sonarscanner
+      - name: Cache SonarCloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v3
+        with:
+          path: ./.sonar/scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+
+      - name: Install SonarCloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          New-Item -Path ./.sonar/scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
 
       - name: Sops Binary Installer
         uses: mdgreenwald/mozilla-sops-action@v1.2.0
@@ -59,7 +84,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: dotnet sonarscanner begin /k:"mmalyska_argocd-secret-replacer" /o:"mmalyska" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /s:$GITHUB_WORKSPACE/SonarQube.Analysis.xml
+        run: ./.sonar/scanner/dotnet-sonarscanner begin /k:"mmalyska_argocd-secret-replacer" /o:"mmalyska" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /s:$GITHUB_WORKSPACE/SonarQube.Analysis.xml
 
       - name: Build
         run: dotnet build --configuration Release --no-restore
@@ -71,4 +96,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        run: ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"

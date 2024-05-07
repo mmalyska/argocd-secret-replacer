@@ -28,3 +28,6 @@ bld/
 
 # Rider
 .idea/
+
+# devcontainer
+.mono/

@@ -13,10 +13,10 @@ parser.WithParsed(RunOptions);
 
 static void RunOptions(object opts)
 {
-    ISecretsProviderFactory providerFactory = new SecretsProviderFactory();
-    IModifiersFactory modifiersFactory = new ModifiersFactory();
+    var providerFactory = new SecretsProviderFactory();
+    var modifiersFactory = new ModifiersFactory();
     var provider = providerFactory.GetProvider(opts);
-    ISecretReplacer replacer = new SecretReplacer(provider, modifiersFactory);
+    var replacer = new SecretReplacer(provider, modifiersFactory);
 
     var data = Console.In.ReadToEnd();
     Console.Out.Write(replacer.Replace(data));
