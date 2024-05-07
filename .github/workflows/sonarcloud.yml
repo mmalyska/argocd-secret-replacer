@@ -11,6 +11,11 @@ on:
     paths:
       - 'src/**'
       - 'test/**'
+  pull_request_target: 
+    types: [opened, synchronize, reopened] 
+    paths:
+      - 'src/**'
+      - 'test/**'
 
 permissions:
   contents: read
@@ -22,6 +27,9 @@ env:
 
 jobs:
   build:
+    if: |
+      (github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]') ||
+      (github.event_name != 'pull_request_target' && github.actor != 'dependabot[bot]')
     strategy:
       matrix:
         os: [ ubuntu-latest ]
@@ -31,7 +39,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        if: ${{ github.event_name != 'pull_request_target' }} 
         with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Checkout PR 
+        if: ${{ github.event_name == 'pull_request_target' }} 
+        uses: actions/checkout@v3
+        with: 
+          ref: ${{ github.event.pull_request.head.sha }} 
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       - uses: actions/setup-java@v4
