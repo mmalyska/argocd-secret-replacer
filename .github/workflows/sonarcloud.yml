@@ -17,7 +17,7 @@ permissions:
   checks: write
 
 env:
-  DOTNET_VERSION: '7.*'
+  DOTNET_VERSION: '8.*'
 
 jobs:
   build:
