@@ -7,7 +7,7 @@ permissions:
   contents: write
 
 env:
-  DOTNET_VERSION: '8.*'
+  DOTNET_VERSION: '9.*'
 
 jobs:
   release:
