@@ -3,21 +3,15 @@
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'src/**'
-      - 'tests/**'
   pull_request:
-    types: [opened, synchronize, reopened]
-    paths:
-      - 'src/**'
-      - 'test/**'
+    types: [ opened, synchronize, reopened ]
 
 permissions:
   contents: read
   checks: write
 
 env:
-  DOTNET_VERSION: '8.*'
+  DOTNET_VERSION: '9.*'
 
 jobs:
   build:

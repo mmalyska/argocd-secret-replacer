@@ -8,6 +8,9 @@ on:
   schedule:
     - cron: '26 17 * * 5'
 
+env:
+  DOTNET_VERSION: '9.*'
+
 jobs:
   analyze:
 
@@ -26,6 +29,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
