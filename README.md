@@ -7,7 +7,7 @@ More stores may come in future releases.
 The application will scan manifests from stdin looking for the string `<secret:key|modifier>` to be replaced from selected store and outputted to stdout.
 
 ## Why should I use it?
-- Allows you to store secrets securely when in Git Ops approach
+- Allows you to store secrets securely when iusing Git Ops approach
   - Configuration is in Git
   - Secrets are stored in selected secret store
 - Works well with helm and kustomize generated manifests
