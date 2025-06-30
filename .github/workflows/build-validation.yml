@@ -31,7 +31,9 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Sops Binary Installer
-        uses: mdgreenwald/mozilla-sops-action@v1.2.0
+        uses: jkroepke/setup-sops@v1.2.4
+        with:
+          version: 'latest'
 
       - uses: actions/cache@v3
         with:
@@ -51,7 +53,7 @@ jobs:
         run: dotnet test --no-restore --verbosity normal --logger trx --results-directory "TestResults-${{ matrix.os }}"
 
       - name: Upload dotnet test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dotnet-results-${{ matrix.os }}
           path: TestResults-${{ matrix.os }}
