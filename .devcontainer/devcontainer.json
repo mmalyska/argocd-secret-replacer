@@ -25,7 +25,7 @@
 	// }
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "dotnet restore",
+	"postCreateCommand": "mkdir -p /home/vscode/.claude/projects/-workspaces-argocd-secret-replacer && ln -sfn /workspaces/argocd-secret-replacer/.claude/memory /home/vscode/.claude/projects/-workspaces-argocd-secret-replacer/memory",
 
 	// Configure tool-specific properties.
 	// "customizations": {},

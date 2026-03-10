@@ -1,83 +1,205 @@
 # argocd-secret-replacer
-An [Argo CD](https://github.com/argoproj/argo-cd/) plugin to replace placeholders in Kubernetes manifests with secrets stored in:
-- [sops](https://github.com/mozilla/sops)
 
-More stores may come in future releases.
+An [Argo CD](https://github.com/argoproj/argo-cd/) Config Management Plugin (CMP) that replaces secret placeholders in Kubernetes manifests with values from a secrets store.
 
-The application will scan manifests from stdin looking for the string `<secret:key|modifier>` to be replaced from selected store and outputted to stdout.
+Supported secret stores:
+- [sops](https://github.com/mozilla/sops) (YAML and JSON)
 
-## Why should I use it?
-- Allows you to store secrets securely when using Git Ops approach
-  - Configuration is in Git
-  - Secrets are stored in selected secret store
-- Works well with helm and kustomize generated manifests
-- Allows you to securely replace values in any kind of documents
+The tool reads manifests from **stdin**, scans them for `<secret:key|modifier>` placeholders, replaces them with values from the selected store, and writes the result to **stdout**.
 
-## Installing in Argo CD as an plugin
-You can find [Kustomization example](https://github.com/mmalyska/argocd-secret-replacer/tree/main/examples/argocd/kustomize) how to install this application as a plugin.
+## Why use it?
 
-If you want to install plugin in Argo CD, you can build your own Argo CD image with the plugin already inside, or make use of an Init Container to pull the binary. 
-More about plugins you can find in Argo CD [documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/custom_tools/).
+- Store secrets securely alongside GitOps configuration
+- Works transparently with helm and kustomize generated manifests
+- Supports any text-based Kubernetes manifest format
+- Automatically handles base64-encoded values (e.g. `Secret.data` fields)
+
+## Installation
+
+### As an Argo CD Config Management Plugin (recommended)
+
+The recommended installation method uses the Argo CD [Config Management Plugin v2 (sidecar) pattern](https://argo-cd.readthedocs.io/en/stable/operator-manual/config-management-plugins/).
+
+A ready-to-use [Kustomization example](https://github.com/mmalyska/argocd-secret-replacer/tree/main/examples/argocd/kustomize) is provided that:
+
+- Deploys the plugin as sidecar containers in `argocd-repo-server`
+- Configures both kustomize and helm plugin variants
+- Mounts a sops age key from a Kubernetes Secret
+
+```bash
+# Apply with your own age key secret already created
+kubectl apply -k examples/argocd/kustomize
+```
+
+The plugin image is published to `ghcr.io/mmalyska/argocd-secret-replacer`.
+
+### Manual binary installation
+
+Self-contained binaries are published on every [GitHub release](https://github.com/mmalyska/argocd-secret-replacer/releases) for:
+
+| Platform | Target |
+|---|---|
+| Linux x64 | `linux-x64` |
+| Linux x64 musl (Alpine) | `linux-musl-x64` |
+| Linux ARM64 | `linux-arm64` |
+| Linux ARM64 musl | `linux-musl-arm64` |
+| Windows x64 | `win-x64` |
+| macOS x64 | `osx-x64` |
+| macOS ARM64 (Apple Silicon) | `osx-arm64` |
+
+Download and place the binary in `/custom-tools/` (or any directory in your PATH inside the Argo CD repo-server container).
 
 ## Environment Variables
-| Environment Variable Name | Purpose                                                                                        | Example                         | Required? |
-|---------------------------|------------------------------------------------------------------------------------------------|---------------------------------|-----------|
-| ARGOCD_ENV_SOPS_EXE       | Allows to change sops executable that is used in sops flow                                     | /custom-tools/sops              | no        |
-| SOPS_*                    | Configuring sops via environment variables as in documentation https://github.com/mozilla/sops | SOPS_AGE_KEY_FILE=/sops-age/key |           |
 
-Application uses `ARGOCD_ENV_` prefix from version of Argo CD 2.4 or higher. Previous versions without prefix are not supported.
+| Variable | Purpose | Example | Required |
+|---|---|---|---|
+| `ARGOCD_ENV_SOPS_EXE` | Override the sops executable path | `/custom-tools/sops` | No |
+| `ARGOCD_ENV_SOPS_SECRET_FILE` | Path to the sops-encrypted secrets file (used by the CMP plugin discovery) | `secret.sec.yaml` | No |
+| `SOPS_*` | Any sops configuration variable (see [sops docs](https://github.com/mozilla/sops)) | `SOPS_AGE_KEY_FILE=/sops-age/key` | Depends on sops config |
 
-## Plugin usage
-After installing plugin into /custom-tools/ directory, you need to add it inside Argo CD config map under `configManagementPlugins`.
+> **Note:** The `ARGOCD_ENV_` prefix is required for Argo CD 2.4+. Older versions without this prefix are not supported.
+
+## Plugin usage (CMP v2 sidecar)
+
+The plugin is configured as a `ConfigManagementPlugin` resource mounted into the repo-server sidecar. The example below shows both kustomize and helm variants:
+
+### Kustomize
 
 ```yaml
-- name: replacer-helm
-  init:
-    command: ["/bin/sh", "-c"]
-    args: ["helm dependency build"]
+apiVersion: argoproj.io/v1alpha1
+kind: ConfigManagementPlugin
+metadata:
+  name: sops-replacer-plugin-kustomize
+spec:
+  version: v1.0
+  allowConcurrency: true
+  discover:
+    find:
+      command:
+        - sh
+        - "-c"
+        - "[[ ! -z $ARGOCD_ENV_SOPS_SECRET_FILE ]] && find . -name 'kustomization.yaml' && find . -name '$ARGOCD_ENV_SOPS_SECRET_FILE'"
   generate:
-    command: [sh, -c]
-    args: ["helm template --release-name $ARGOCD_APP_NAME --namespace $ARGOCD_APP_NAMESPACE . | argocd-secret-replacer sops -f $ARGOCD_ENV_SOPS_FILE"]
-- name: replacer-kustomize
-  generate:
-    command: ["sh", "-c"]
-    args: ["kustomize build . | argocd-secret-replacer sops -f $ARGOCD_ENV_SOPS_FILE"]
+    command:
+      - bash
+      - "-c"
+      - |-
+        kustomize build --enable-alpha-plugins . | argocd-secret-replacer sops -f "$ARGOCD_ENV_SOPS_SECRET_FILE"
+  lockRepo: false
 ```
-**Using plugins won't allow you to use the Argo CD build-in application helm/kustomize options.**
 
-More about using plugins you can find in Argo CD [documentation](https://argoproj.github.io/argo-cd/user-guide/config-management-plugins/).
+### Helm
 
-## Testing 
-In this example we will use sops as our provider.
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: ConfigManagementPlugin
+metadata:
+  name: sops-replacer-plugin-helm
+spec:
+  version: v1.0
+  allowConcurrency: true
+  discover:
+    find:
+      command:
+        - sh
+        - "-c"
+        - "[[ ! -z $ARGOCD_ENV_SOPS_SECRET_FILE ]] && find . -name 'Chart.yaml' && find . -name '$ARGOCD_ENV_SOPS_SECRET_FILE'"
+  init:
+    command:
+      - bash
+      - "-c"
+      - helm dependency update
+  generate:
+    command:
+      - bash
+      - "-c"
+      - |-
+        helm template --include-crds --release-name "$ARGOCD_APP_NAME" --namespace "$ARGOCD_APP_NAMESPACE" --kube-version $KUBE_VERSION --api-versions $KUBE_API_VERSIONS . | argocd-secret-replacer sops -f "$ARGOCD_ENV_SOPS_SECRET_FILE"
+  lockRepo: false
+```
 
-Assuming that you have kustomize files that has secret configured and in `secret.sec.yaml` file you have it encrypted we will create example app as below.
-```YAML
+### Argo CD Application
+
+To use the plugin in an application, set the `plugin` source:
+
+```yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: sops-replacer-test
+  name: my-app
 spec:
+  source:
+    repoURL: 'https://github.com/my-org/my-repo'
+    path: my-app
+    plugin:
+      name: sops-replacer-plugin-kustomize
+      env:
+        - name: SOPS_SECRET_FILE
+          value: secret.sec.yaml
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: sops-replacer-test
-  syncPolicy:
-    automated:
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-  source:
-    repoURL: '<your git repo>'
-    path: sops-replacer-test
-    plugin:
-      name: replacer-kustomize
-      env:
-          - name: SOPS_FILE
-            value: secret.sec.yaml
-    targetRevision: HEAD
+    namespace: my-app
 ```
-For more detailed examples, please go to [examples directory](https://github.com/mmalyska/argocd-secret-replacer/tree/main/examples/applications).
+
+For complete working examples see the [examples directory](https://github.com/mmalyska/argocd-secret-replacer/tree/main/examples/applications).
+
+## Placeholder syntax
+
+The tool scans input for the following pattern:
+
+```
+<secret:key.path|modifier1|modifier2>
+```
+
+- `key.path` — key path within the sops-decrypted file's `data:` section
+- `modifier1`, `modifier2` — optional output modifiers (pipe-separated)
+
+The aliases `<sops:...>` and `<secret:...>` are both supported.
+
+### Automatic base64 handling
+
+The replacer also detects base64-encoded strings (≥10 characters) and checks whether their decoded content contains placeholders. If a match is found, the replacement is performed and the result is re-encoded as base64. This means Kubernetes `Secret` `data:` fields are handled automatically — no manual `|base64` modifier is needed.
 
 ## Modifiers
-You can modify the resulting output with the following modifiers:
 
-* base64: Will base64 encode the secret.
+| Modifier | Description |
+|---|---|
+| `base64` | Base64-encodes the secret value |
+
+**Example:**
+
+```yaml
+# Input
+apiVersion: v1
+kind: Secret
+stringData:
+  password: <secret:db.password>
+data:
+  token: <secret:api.token|base64>
+```
+
+## Building from source
+
+Requirements: [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9)
+
+```bash
+dotnet restore
+dotnet build --configuration Release
+dotnet test
+```
+
+To publish a self-contained binary:
+
+```bash
+dotnet publish src/Replacer/Replacer.csproj \
+  --configuration Release \
+  --runtime linux-x64 \
+  --self-contained true \
+  -o ./publish
+```
+
+## Development
+
+A [Dev Container](.devcontainer/devcontainer.json) is provided using `.NET 9`. Open the repository in VS Code and select **Reopen in Container**.
+
+> E2E tests require `sops` to be installed and a valid age key configured. Unit tests have no external dependencies.
