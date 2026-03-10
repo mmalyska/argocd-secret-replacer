@@ -1,5 +1,13 @@
 # CLAUDE.md — argocd-secret-replacer
 
+## Security
+
+**Never store secrets, credentials, tokens, API keys, or other sensitive data in:**
+- This file (`CLAUDE.md`)
+- Memory files (`.claude/MEMORY.md`)
+- Any committed file in this repository
+- GitHub Actions workflow files (use GitHub Secrets instead)
+
 ## Project Overview
 
 `argocd-secret-replacer` is a C# (.NET 9) CLI tool that acts as an [Argo CD](https://github.com/argoproj/argo-cd/) Config Management Plugin (CMP). It reads Kubernetes manifests from **stdin**, replaces `<secret:key|modifier>` placeholders with values from a secrets store (currently sops), and writes the result to **stdout**.
