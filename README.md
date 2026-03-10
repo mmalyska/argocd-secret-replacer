@@ -4,6 +4,7 @@ An [Argo CD](https://github.com/argoproj/argo-cd/) Config Management Plugin (CMP
 
 Supported secret stores:
 - [sops](https://github.com/mozilla/sops) (YAML and JSON)
+- Kubernetes Secret volume mounts (plain-text files on disk)
 
 The tool reads manifests from **stdin**, scans them for `<secret:key|modifier>` placeholders, replaces them with values from the selected store, and writes the result to **stdout**.
 
@@ -53,15 +54,22 @@ Download and place the binary in `/custom-tools/` (or any directory in your PATH
 
 | Variable | Purpose | Example | Required |
 |---|---|---|---|
-| `ARGOCD_ENV_SOPS_EXE` | Override the sops executable path | `/custom-tools/sops` | No |
-| `ARGOCD_ENV_SOPS_SECRET_FILE` | Path to the sops-encrypted secrets file (used by the CMP plugin discovery) | `secret.sec.yaml` | No |
+| `ARGOCD_ENV_SOPS_EXE` | Override the sops executable path | `/custom-tools/sops` | No (sops verb only) |
+| `ARGOCD_ENV_SOPS_SECRET_FILE` | Path to the sops-encrypted secrets file (used by the CMP plugin discovery) | `secret.sec.yaml` | No (sops verb only) |
 | `SOPS_*` | Any sops configuration variable (see [sops docs](https://github.com/mozilla/sops)) | `SOPS_AGE_KEY_FILE=/sops-age/key` | Depends on sops config |
 
 > **Note:** The `ARGOCD_ENV_` prefix is required for Argo CD 2.4+. Older versions without this prefix are not supported.
 
 ## Plugin usage (CMP v2 sidecar)
 
-The plugin is configured as a `ConfigManagementPlugin` resource mounted into the repo-server sidecar. The example below shows both kustomize and helm variants:
+The plugin is configured as a `ConfigManagementPlugin` resource mounted into the repo-server sidecar. Two secret provider verbs are available:
+
+| Verb | Flag | Description |
+|---|---|---|
+| `sops` | `-f <file>` | Decrypt a sops-encrypted YAML/JSON file |
+| `secret` | `--mount <dir>` | Read from a Kubernetes Secret mounted as a directory |
+
+The example below shows both kustomize and helm variants using each provider.
 
 ### Kustomize
 
@@ -141,6 +149,21 @@ spec:
     namespace: my-app
 ```
 
+### Kubernetes Secret volume mount (secret verb)
+
+To use the `secret` verb instead, mount a Kubernetes Secret as a volume into the sidecar and point `--mount` at it:
+
+```yaml
+generate:
+  command:
+    - bash
+    - "-c"
+    - |-
+      kustomize build --enable-alpha-plugins . | argocd-secret-replacer secret --mount /cluster-secrets
+```
+
+Each key in the Kubernetes Secret becomes a file in the mounted directory, and its value is the file content.
+
 For complete working examples see the [examples directory](https://github.com/mmalyska/argocd-secret-replacer/tree/main/examples/applications).
 
 ## Placeholder syntax
@@ -148,10 +171,10 @@ For complete working examples see the [examples directory](https://github.com/mm
 The tool scans input for the following pattern:
 
 ```
-<secret:key.path|modifier1|modifier2>
+<secret:key|modifier1|modifier2>
 ```
 
-- `key.path` — key path within the sops-decrypted file's `data:` section
+- `key` — for `sops`: key path within the decrypted file's `data:` section; for `secret`: filename in the mounted directory
 - `modifier1`, `modifier2` — optional output modifiers (pipe-separated)
 
 The aliases `<sops:...>` and `<secret:...>` are both supported.
@@ -200,6 +223,6 @@ dotnet publish src/Replacer/Replacer.csproj \
 
 ## Development
 
-A [Dev Container](.devcontainer/devcontainer.json) is provided using `.NET 9`. Open the repository in VS Code and select **Reopen in Container**.
+A [Dev Container](.devcontainer/devcontainer.json) is provided using `.NET 9` with `sops` pre-installed. Open the repository in VS Code and select **Reopen in Container**.
 
-> E2E tests require `sops` to be installed and a valid age key configured. Unit tests have no external dependencies.
+> E2E tests for the `sops` verb require a valid age key configured. Unit tests and `secret` verb E2E tests have no external dependencies.

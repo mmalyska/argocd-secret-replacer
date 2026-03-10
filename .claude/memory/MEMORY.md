@@ -2,7 +2,8 @@
 
 ## What it is
 C# (.NET 9) CLI tool — Argo CD Config Management Plugin (CMP).
-Reads Kubernetes manifests from stdin, replaces `<secret:key|modifier>` placeholders with sops-decrypted values, writes to stdout.
+Reads Kubernetes manifests from stdin, replaces `<secret:key|modifier>` placeholders with values from a secrets store, writes to stdout.
+Two providers: `sops` verb (sops-encrypted file) and `secret` verb (K8s Secret volume mount directory).
 
 ## Build / Test commands
 - `dotnet restore` — restore NuGet packages
@@ -12,9 +13,12 @@ Reads Kubernetes manifests from stdin, replaces `<secret:key|modifier>` placehol
 
 ## Key files
 - [src/Replacer/Program.cs](src/Replacer/Program.cs) — entry point
-- [src/Replacer/Options.cs](src/Replacer/Options.cs) — CLI verb/options (sops verb, -f flag)
-- [src/Replacer/Substitution/ISecretReplacer.cs](src/Replacer/Substitution/ISecretReplacer.cs) — regex replacement logic
+- [src/Replacer/Options.cs](src/Replacer/Options.cs) — sops verb options (-f flag)
+- [src/Replacer/MountedSecretOptions.cs](src/Replacer/MountedSecretOptions.cs) — secret verb options (--mount flag)
+- [src/Replacer/SecretsProvider/ISecretsProviderFactory.cs](src/Replacer/SecretsProvider/ISecretsProviderFactory.cs) — provider factory (switch on options type)
 - [src/Replacer/SecretsProvider/Sops/SopsSecretProvider.cs](src/Replacer/SecretsProvider/Sops/SopsSecretProvider.cs) — runs sops -d
+- [src/Replacer/SecretsProvider/MountedSecret/MountedSecretProvider.cs](src/Replacer/SecretsProvider/MountedSecret/MountedSecretProvider.cs) — reads files from mounted K8s Secret dir
+- [src/Replacer/Substitution/ISecretReplacer.cs](src/Replacer/Substitution/ISecretReplacer.cs) — regex replacement logic
 - [src/Replacer/Modifiers/](src/Replacer/Modifiers/) — modifier plugins (auto-discovered by reflection)
 - [Directory.Build.props](Directory.Build.props) — shared MSBuild settings (net9.0, TreatWarningsAsErrors=true, Nullable=enable)
 - [.editorconfig](.editorconfig) — code style (4-space C#, LF, var everywhere, file-scoped namespaces)
@@ -32,7 +36,9 @@ Reads Kubernetes manifests from stdin, replaces `<secret:key|modifier>` placehol
 - All warnings treated as errors
 
 ## Important notes
-- E2E tests call sops subprocess — need sops installed (not in devcontainer by default)
+- `sops` is installed in the devcontainer via `ghcr.io/devcontainers-extra/features/sops`
+- E2E tests for sops verb still need a valid age key; `secret` verb E2E tests have no external deps
 - Modifiers are discovered via reflection — no factory registration needed for new ones
 - Sops secrets must have a `data:` key in the decrypted YAML/JSON
 - `ARGOCD_ENV_SOPS_EXE` overrides the sops binary path
+- MountedSecretProvider trims trailing whitespace from file values (K8s sometimes adds newlines)

@@ -11,11 +11,6 @@ on:
     paths:
       - 'src/**'
       - 'test/**'
-  pull_request_target:
-    types: [opened, synchronize, reopened]
-    paths:
-      - 'src/**'
-      - 'test/**'
 
 permissions:
   contents: read
@@ -27,9 +22,6 @@ env:
 
 jobs:
   build:
-    if: |
-      (github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]') ||
-      (github.event_name != 'pull_request_target' && github.actor != 'dependabot[bot]')
     strategy:
       matrix:
         os: [ ubuntu-latest ]
@@ -39,15 +31,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        if: ${{ github.event_name != 'pull_request_target' }}
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-
-      - name: Checkout PR
-        if: ${{ github.event_name == 'pull_request_target' }}
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       - uses: actions/setup-java@v4
@@ -83,7 +67,7 @@ jobs:
           dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
 
       - name: Sops Binary Installer
-        uses: mdgreenwald/mozilla-sops-action@v1.2.0
+        uses: mdgreenwald/mozilla-sops-action@67e083ce879a0843fb186121e1e061c7fc4ec072 # v1.2.0
 
       - uses: actions/cache@v3
         with:
@@ -100,7 +84,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./.sonar/scanner/dotnet-sonarscanner begin /k:"mmalyska_argocd-secret-replacer" /o:"mmalyska" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /s:$GITHUB_WORKSPACE/SonarQube.Analysis.xml
+        run: ./.sonar/scanner/dotnet-sonarscanner begin /k:"mmalyska_argocd-secret-replacer" /o:"mmalyska" /d:sonar.token="$SONAR_TOKEN" /s:$GITHUB_WORKSPACE/SonarQube.Analysis.xml
 
       - name: Build
         run: dotnet build --configuration Release --no-restore
@@ -112,4 +96,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        run: ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="$SONAR_TOKEN"
