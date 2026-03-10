@@ -45,7 +45,9 @@ The provider simply reads the file whose name matches the requested key.
 
 ### Step 1 — Add `MountedSecretOptions` (new CLI verb)
 
-**File to create:** `src/Replacer/SecretsProvider/MountedSecret/MountedSecretOptions.cs`
+**File to create:** `src/Replacer/MountedSecretOptions.cs`
+
+(Placed alongside `Options.cs` — consistent with `SopsOptions` being in `namespace Replacer;` at the project root.)
 
 ```csharp
 namespace Replacer;
@@ -112,8 +114,8 @@ public sealed class MountedSecretProvider : ISecretsProvider
 Change the `SecretsProviderFactory.GetProvider` switch to handle `MountedSecretOptions`:
 
 ```csharp
-// Add using at top:
-using Replacer.SecretsProvider.MountedSecret;
+// Add using at top (relative, consistent with existing `using Sops;`):
+using MountedSecret;
 
 public class SecretsProviderFactory : ISecretsProviderFactory
 {
@@ -214,7 +216,12 @@ public class MountedSecretProviderTests
 
 **File to modify:** `test/ReplacerUnitTests/SecretsProviderFactoryTests.cs`
 
-Add a test case:
+Add the following using at the top of the file alongside the existing usings, then add the test case:
+
+```csharp
+// Add to existing usings:
+using Replacer.SecretsProvider.MountedSecret;
+```
 
 ```csharp
 [Fact]
@@ -305,7 +312,7 @@ public class MountedSecretE2ETests
 
 | Action | File |
 |--------|------|
-| CREATE | `src/Replacer/SecretsProvider/MountedSecret/MountedSecretOptions.cs` |
+| CREATE | `src/Replacer/MountedSecretOptions.cs` |
 | CREATE | `src/Replacer/SecretsProvider/MountedSecret/MountedSecretProvider.cs` |
 | MODIFY | `src/Replacer/SecretsProvider/ISecretsProviderFactory.cs` — add `MountedSecretOptions` case |
 | MODIFY | `src/Replacer/Program.cs` — add `MountedSecretOptions` to `ParseArguments` |
