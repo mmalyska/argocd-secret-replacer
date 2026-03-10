@@ -64,6 +64,13 @@ The replacer also scans every base64-encoded segment (≥10 chars) for placehold
 - Supports YAML (`.yaml`/`.yml`) and JSON (`.json`) sops files.
 - Secrets are read from the `data:` key in the decrypted file.
 
+### MountedSecret Provider
+- Reads secrets from a directory of plain-text files (Kubernetes Secret mounted as a volume).
+- Each filename is the secret key; the file content is the value (trailing whitespace trimmed).
+- CLI verb: `secret --mount <dir>` — options in `src/Replacer/MountedSecretOptions.cs`.
+- Implementation in `src/Replacer/SecretsProvider/MountedSecret/MountedSecretProvider.cs`.
+- No subprocess or external dependencies.
+
 ### Modifiers
 Modifiers implement `IModifier` and are discovered at runtime via reflection. Currently only `base64` is implemented. New modifiers are auto-discovered without factory registration.
 
@@ -89,9 +96,9 @@ Modifiers implement `IModifier` and are discovered at runtime via reflection. Cu
 
 ## Development Environment
 
-A devcontainer ([.devcontainer/devcontainer.json](.devcontainer/devcontainer.json)) is provided using the `mcr.microsoft.com/devcontainers/dotnet:9.0` image. It installs the C# Dev Kit and Claude Code VSCode extensions.
+A devcontainer ([.devcontainer/devcontainer.json](.devcontainer/devcontainer.json)) is provided using the `mcr.microsoft.com/devcontainers/dotnet:9.0` image. It installs the C# Dev Kit, Claude Code VSCode extensions, and `sops` (via `ghcr.io/devcontainers-extra/features/sops`).
 
-Note: The devcontainer does **not** install sops automatically — E2E tests will fail without it. To run E2E tests locally, install sops manually or add it as a devcontainer feature.
+Note: E2E tests for the `sops` verb still require a valid age key to be configured. Unit tests and `secret` verb E2E tests have no external dependencies.
 
 ## Adding a New Secrets Provider
 
