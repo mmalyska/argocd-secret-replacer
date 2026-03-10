@@ -18,7 +18,7 @@ permissions:
 
 env:
   JAVA_VERSION: '21'
-  DOTNET_VERSION: '9.*'
+  DOTNET_VERSION: '10.*'
 
 jobs:
   build:
