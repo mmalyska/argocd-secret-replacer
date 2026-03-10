@@ -31,3 +31,4 @@ bld/
 
 # devcontainer
 .mono/
+.claude/settings.local.json
