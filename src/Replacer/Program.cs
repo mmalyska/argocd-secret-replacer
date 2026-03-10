@@ -3,10 +3,11 @@ using Microsoft.Extensions.Logging;
 using Replacer;
 using Replacer.Modifiers;
 using Replacer.SecretsProvider;
+using Replacer.SecretsProvider.MountedSecret;
 using Replacer.Substitution;
 using static CommandLine.Parser;
 
-var parser = Default.ParseArguments(args, typeof(SopsOptions))
+var parser = Default.ParseArguments(args, typeof(SopsOptions), typeof(MountedSecretOptions))
     .WithNotParsed(ParseErrors);
 
 parser.WithParsed(RunOptions);
