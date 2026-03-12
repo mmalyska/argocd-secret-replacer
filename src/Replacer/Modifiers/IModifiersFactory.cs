@@ -9,16 +9,17 @@ public interface IModifiersFactory
 
 public class ModifiersFactory : IModifiersFactory
 {
-    private readonly IEnumerable<IModifier> modifiersAvailable;
+    private readonly Dictionary<string, IModifier> modifiers;
 
     public ModifiersFactory()
-        => modifiersAvailable = AppDomain.CurrentDomain
+        => modifiers = AppDomain.CurrentDomain
             .GetAssemblies()
             .SelectMany(s => s.GetTypes())
-            .Where(t => t.GetInterfaces().Contains(typeof(IModifier)))
+            .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Contains(typeof(IModifier)))
             .Select(t => Activator.CreateInstance(t) as IModifier)
-            .Where(m => m is not null)!;
+            .Where(m => m is not null)
+            .ToDictionary(m => m!.Key, m => m!);
 
     public IModifier? GetModifier(string name)
-        => modifiersAvailable.SingleOrDefault(t => t.Key == name);
+        => modifiers.GetValueOrDefault(name);
 }
