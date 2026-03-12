@@ -2,26 +2,22 @@ namespace Replacer.SecretsProvider.MountedSecret;
 
 public sealed class MountedSecretProvider : ISecretsProvider
 {
-    private readonly string mountPath;
+    private readonly Dictionary<string, string> secrets;
 
     public MountedSecretProvider(MountedSecretOptions options)
     {
         if (string.IsNullOrWhiteSpace(options.MountPath))
             throw new ArgumentNullException(nameof(options));
 
-        mountPath = options.MountPath;
+        if (!Directory.Exists(options.MountPath))
+            throw new DirectoryNotFoundException($"Mounted secret directory not found: {options.MountPath}");
 
-        if (!Directory.Exists(mountPath))
-            throw new DirectoryNotFoundException($"Mounted secret directory not found: {mountPath}");
+        secrets = Directory.EnumerateFiles(options.MountPath)
+            .ToDictionary(
+                f => Path.GetFileName(f)!,
+                f => File.ReadAllText(f).TrimEnd('\n', '\r', ' '));
     }
 
     public string GetSecret(string key)
-    {
-        var filePath = Path.Combine(mountPath, key);
-
-        if (!File.Exists(filePath))
-            return string.Empty;
-
-        return File.ReadAllText(filePath).TrimEnd('\n', '\r', ' ');
-    }
+        => secrets.TryGetValue(key, out var value) ? value : string.Empty;
 }
