@@ -67,7 +67,7 @@ jobs:
           dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
 
       - name: Sops Binary Installer
-        uses: mdgreenwald/mozilla-sops-action@67e083ce879a0843fb186121e1e061c7fc4ec072 # v1.2.0
+        uses: mdgreenwald/mozilla-sops-action@d9714e521cbaecdae64a89d2fdd576dd2aa97056 # v1.6.0
 
       - uses: actions/cache@v3
         with:
