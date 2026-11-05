@@ -1,9 +1,17 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
+// For format details, see https://aka.ms/devcontainer.json.
+// The shared dev-workstation image (built in mmalyska/containers) provides the general tools, age included.
+// Tools only this repository needs come from features: the .NET SDK and sops.
 {
 	"name": "C# (.NET)",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/dotnet:10.0",
+	"image": "ghcr.io/mmalyska/dev-workstation:1.0.0@sha256:71335a56b4a6dd99f9105da136395963f24fd40f4832a0ce4d54e46b725e6fb5",
+
+	"features": {
+		"ghcr.io/devcontainers/features/dotnet:2": {
+			"version": "10.0"
+		},
+		"ghcr.io/devcontainers-extra/features/sops:1": {}
+	},
+
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -11,27 +19,7 @@
 				"Anthropic.claude-code"
 			]
 		}
-	}
-
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	"features": {
-		"ghcr.io/devcontainers-extra/features/sops:1": {}
 	},
 
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [5000, 5001],
-	// "portsAttributes": {
-	//		"5001": {
-	//			"protocol": "https"
-	//		}
-	// }
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "mkdir -p /home/vscode/.claude/projects/-workspaces-argocd-secret-replacer && ln -sfn /workspaces/argocd-secret-replacer/.claude/memory /home/vscode/.claude/projects/-workspaces-argocd-secret-replacer/memory",
-
-	// Configure tool-specific properties.
-	// "customizations": {},
-
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	"postCreateCommand": "mkdir -p /home/vscode/.claude/projects/-workspaces-argocd-secret-replacer && ln -sfn /workspaces/argocd-secret-replacer/.claude/memory /home/vscode/.claude/projects/-workspaces-argocd-secret-replacer/memory"
 }
