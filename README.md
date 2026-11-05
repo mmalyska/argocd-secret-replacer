@@ -223,6 +223,6 @@ dotnet publish src/Replacer/Replacer.csproj \
 
 ## Development
 
-A [Dev Container](.devcontainer/devcontainer.json) is provided using `.NET 9` with `sops` pre-installed. Open the repository in VS Code and select **Reopen in Container**.
+A [Dev Container](.devcontainer/devcontainer.json) is provided on the shared `dev-workstation` image with the `.NET 10` SDK, `sops` and `age`. Open the repository in VS Code and select **Reopen in Container**.
 
 > E2E tests for the `sops` verb require a valid age key configured. Unit tests and `secret` verb E2E tests have no external dependencies.

@@ -104,7 +104,7 @@ Modifiers implement `IModifier` and are discovered at runtime via reflection. Cu
 
 ## Development Environment
 
-A devcontainer ([.devcontainer/devcontainer.json](.devcontainer/devcontainer.json)) is provided using the `mcr.microsoft.com/devcontainers/dotnet:9.0` image. It installs the C# Dev Kit, Claude Code VSCode extensions, and `sops` (via `ghcr.io/devcontainers-extra/features/sops`).
+A devcontainer ([.devcontainer/devcontainer.json](.devcontainer/devcontainer.json)) is provided using the shared `ghcr.io/mmalyska/dev-workstation` image (pinned by digest). The .NET 10 SDK comes from `ghcr.io/devcontainers/features/dotnet` and `sops` from `ghcr.io/devcontainers-extra/features/sops`; `age` is in the image. It installs the C# Dev Kit and Claude Code VSCode extensions.
 
 Note: E2E tests for the `sops` verb still require a valid age key to be configured. Unit tests and `secret` verb E2E tests have no external dependencies.
 
