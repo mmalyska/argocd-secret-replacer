@@ -43,7 +43,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install musl-tools
         if: ${{ matrix.target == 'linux-musl-arm64' || matrix.target == 'linux-musl-x64' }}
