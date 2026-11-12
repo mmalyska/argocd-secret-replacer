@@ -35,7 +35,7 @@ jobs:
         with:
           version: 'latest'
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
           # Look to see if there is a cache hit for the corresponding requirements file
