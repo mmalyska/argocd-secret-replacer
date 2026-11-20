@@ -3,7 +3,7 @@
 // Tools only this repository needs come from features: the .NET SDK and sops.
 {
 	"name": "C# (.NET)",
-	"image": "ghcr.io/mmalyska/dev-workstation:1.0.0@sha256:84dde2fed5eeb977c2c0c6e6e2a2845ac595908b210aca2bdaf5dd44d2cb6c1b",
+	"image": "ghcr.io/mmalyska/dev-workstation:2.0.0@sha256:35015ea05f4f13e5a9ab0ba038936859a42fde5ba94a5728c44227c058aca443",
 
 	"features": {
 		"ghcr.io/devcontainers/features/dotnet:2": {
