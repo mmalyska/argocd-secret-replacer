@@ -31,7 +31,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Sops Binary Installer
-        uses: jkroepke/setup-sops@v1.5.88
+        uses: jkroepke/setup-sops@v1.5.89
         with:
           version: 'latest'
 
